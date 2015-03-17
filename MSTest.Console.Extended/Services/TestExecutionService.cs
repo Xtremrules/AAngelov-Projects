@@ -43,7 +43,7 @@ namespace MSTest.Console.Extended.Services
 
             if (failedTestsPercentage < this.consoleArgumentsProvider.FailedTestsThreshold)
             {
-                for (int i = 0; i < this.consoleArgumentsProvider.RetriesCount - 1; i++)
+                for (int i = 0; i < this.consoleArgumentsProvider.RetriesCount; i++)
                 {
                     this.log.InfoFormat("Start to execute again {0} failed tests.", failedTests.Count);
                     if (failedTests.Count > 0)
@@ -65,6 +65,7 @@ namespace MSTest.Console.Extended.Services
                     {
                         break;
                     }
+
                     failedTests = this.microsoftTestTestRunProvider.GetAllNotPassedTests(testRun.Results.ToList());
                 }
             }
