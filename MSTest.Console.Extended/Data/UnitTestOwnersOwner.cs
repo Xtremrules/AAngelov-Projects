@@ -1,21 +1,15 @@
-/// <remarks/>
+using System.Xml.Serialization;
 
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class UnitTestOwnersOwner
+namespace MSTest.Console.Extended.Data
 {
-    private string nameField;
-
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name
+    [XmlTypeAttribute(AnonymousType = true)]
+    public partial class UnitTestOwnersOwner
     {
-        get
+        [XmlAttributeAttribute("name")]
+        public string Name
         {
-            return this.nameField;
-        }
-        set
-        {
-            this.nameField = value;
+            get;
+            set;
         }
     }
 }

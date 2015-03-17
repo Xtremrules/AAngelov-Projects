@@ -1,20 +1,14 @@
-/// <remarks/>
+using System.Xml.Serialization;
 
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class TestRunUnitTestOwners
+namespace MSTest.Console.Extended.Data
 {
-    private UnitTestOwnersOwner ownerField;
-
-    /// <remarks/>
-    public UnitTestOwnersOwner Owner
+    [XmlTypeAttribute(AnonymousType = true)]
+    public partial class TestRunUnitTestOwners
     {
-        get
+        public UnitTestOwnersOwner Owner
         {
-            return this.ownerField;
-        }
-        set
-        {
-            this.ownerField = value;
+            get;
+            set;
         }
     }
 }

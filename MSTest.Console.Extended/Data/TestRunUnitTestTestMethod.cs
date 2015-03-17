@@ -2,72 +2,35 @@ using System.Xml.Serialization;
 
 namespace MSTest.Console.Extended.Data
 {
-    /// <remarks/>
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010")]
     public partial class TestRunUnitTestTestMethod
     {
-        private string codeBaseField;
-
-        private string adapterTypeNameField;
-
-        private string classNameField;
-
-        private string nameField;
-
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public string codeBase
+        [XmlAttributeAttribute("codeBase")]
+        public string CodeBase
         {
-            get
-            {
-                return this.codeBaseField;
-            }
-            set
-            {
-                this.codeBaseField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public string adapterTypeName
+        [XmlAttributeAttribute("adapterTypeName")]
+        public string AdapterTypeName
         {
-            get
-            {
-                return this.adapterTypeNameField;
-            }
-            set
-            {
-                this.adapterTypeNameField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public string className
+        [XmlAttributeAttribute("className")]
+        public string ClassName
         {
-            get
-            {
-                return this.classNameField;
-            }
-            set
-            {
-                this.classNameField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public string name
+        [XmlAttributeAttribute("name")]
+        public string Name
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
+            get;
+            set;
         }
     }
 }

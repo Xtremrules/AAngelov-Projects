@@ -1,40 +1,22 @@
 ﻿using System;
 using System.Linq;
+using System.Xml.Serialization;
 
 namespace MSTest.Console.Extended.Data
 {
-    /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010")]
+    [XmlTypeAttribute(AnonymousType = true, Namespace = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010")]
     public partial class TestRunUnitTestResultOutputErrorInfo
     {
-        private string messageField;
-
-        private string stackTraceField;
-
-        /// <remarks/>
         public string Message
         {
-            get
-            {
-                return this.messageField;
-            }
-            set
-            {
-                this.messageField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
         public string StackTrace
         {
-            get
-            {
-                return this.stackTraceField;
-            }
-            set
-            {
-                this.stackTraceField = value;
-            }
+            get;
+            set;
         }
     }
 }

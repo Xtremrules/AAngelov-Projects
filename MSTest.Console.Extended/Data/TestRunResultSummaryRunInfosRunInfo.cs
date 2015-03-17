@@ -1,70 +1,35 @@
-﻿namespace MSTest.Console.Extended.Data
+﻿using System.Xml.Serialization;
+
+namespace MSTest.Console.Extended.Data
 {
-    /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010")]
+    [XmlTypeAttribute(AnonymousType = true, Namespace = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010")]
     public partial class TestRunResultSummaryRunInfosRunInfo
     {
-        private string textField;
-
-        private string computerNameField;
-
-        private string outcomeField;
-
-        private System.DateTime timestampField;
-
-        /// <remarks/>
         public string Text
         {
-            get
-            {
-                return this.textField;
-            }
-            set
-            {
-                this.textField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string computerName
+        [XmlAttributeAttribute("computerName")]
+        public string ComputerName
         {
-            get
-            {
-                return this.computerNameField;
-            }
-            set
-            {
-                this.computerNameField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string outcome
+        [XmlAttributeAttribute("outcome")]
+        public string Outcome
         {
-            get
-            {
-                return this.outcomeField;
-            }
-            set
-            {
-                this.outcomeField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public System.DateTime timestamp
+        [XmlAttributeAttribute("timestamp")]
+        public System.DateTime Timestamp
         {
-            get
-            {
-                return this.timestampField;
-            }
-            set
-            {
-                this.timestampField = value;
-            }
+            get;
+            set;
         }
     }
 }

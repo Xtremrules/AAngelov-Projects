@@ -14,31 +14,38 @@ namespace MSTest.Console.Extended.Infrastructure
         {
             this.consoleArgumentsProvider = consoleArgumentsProvider;
         }
-    
-        public void SerializeTestRun(TestRun updatedTestRun)
+
+        public void SerializeTestRun(TestRun testRun)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(TestRun));
             TextWriter writer = new StreamWriter(this.consoleArgumentsProvider.NewTestResultPath);
+
             using (writer)
             {
-                serializer.Serialize(writer, updatedTestRun); 
+                serializer.Serialize(writer, testRun);
             }
         }
 
         public TestRun DeserializeTestRun(string resultsPath = "")
         {
             TestRun testRun = null;
+
             if (string.IsNullOrEmpty(resultsPath))
             {
                 resultsPath = this.consoleArgumentsProvider.TestResultPath;
             }
+
             if (File.Exists(resultsPath))
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(TestRun));
                 StreamReader reader = new StreamReader(resultsPath);
-                testRun = (TestRun)serializer.Deserialize(reader);
-                reader.Close();
+
+                using (reader)
+                {
+                    testRun = (TestRun)serializer.Deserialize(reader);
+                }
             }
+
             return testRun;
         }
 
@@ -51,6 +58,7 @@ namespace MSTest.Console.Extended.Infrastructure
                     this.consoleArgumentsProvider.TestResultPath,
                     this.consoleArgumentsProvider.NewTestResultPath
                 };
+
                 foreach (var currentFilePath in filesToBeDeleted)
                 {
                     if (File.Exists(currentFilePath))

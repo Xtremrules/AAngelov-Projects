@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using log4net;
-using MSTest.Console.Extended.Data;
 using MSTest.Console.Extended.Interfaces;
 
 namespace MSTest.Console.Extended.Services
@@ -35,13 +33,14 @@ namespace MSTest.Console.Extended.Services
         public int ExecuteWithRetry()
         {
             this.fileSystemProvider.DeleteTestResultFiles();
+
             this.processExecutionProvider.ExecuteProcessWithAdditionalArguments();
             this.processExecutionProvider.CurrentProcessWaitForExit();
             var testRun = this.fileSystemProvider.DeserializeTestRun();
-            int areAllTestsGreen = 0;
-            var failedTests = new List<TestRunUnitTestResult>();
-            failedTests = this.microsoftTestTestRunProvider.GetAllNotPassedTests(testRun.Results.ToList());
+
+            var failedTests = this.microsoftTestTestRunProvider.GetAllNotPassedTests(testRun.Results.ToList());
             int failedTestsPercentage = this.microsoftTestTestRunProvider.CalculatedFailedTestsPercentage(failedTests, testRun.Results.ToList());
+
             if (failedTestsPercentage < this.consoleArgumentsProvider.FailedTestsThreshold)
             {
                 for (int i = 0; i < this.consoleArgumentsProvider.RetriesCount - 1; i++)
@@ -51,11 +50,14 @@ namespace MSTest.Console.Extended.Services
                     {
                         string currentTestResultPath = this.fileSystemProvider.GetTempTrxFile();
                         string retryRunArguments = this.microsoftTestTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(failedTests, currentTestResultPath);
+
                         this.log.InfoFormat("Run {0} time with arguments {1}", i + 2, retryRunArguments);
                         this.processExecutionProvider.ExecuteProcessWithAdditionalArguments(retryRunArguments);
                         this.processExecutionProvider.CurrentProcessWaitForExit();
+
                         var currentTestRun = this.fileSystemProvider.DeserializeTestRun(currentTestResultPath);
-                        var passedTests = this.microsoftTestTestRunProvider.GetAllPassesTests(currentTestRun);
+                        var passedTests = this.microsoftTestTestRunProvider.GetAllPassedTests(currentTestRun);
+
                         this.microsoftTestTestRunProvider.UpdatePassedTests(passedTests, testRun.Results.ToList());
                         this.microsoftTestTestRunProvider.UpdateResultsSummary(testRun);
                     }
@@ -66,13 +68,16 @@ namespace MSTest.Console.Extended.Services
                     failedTests = this.microsoftTestTestRunProvider.GetAllNotPassedTests(testRun.Results.ToList());
                 }
             }
-            if (failedTests.Count > 0)
-            {
-                areAllTestsGreen = 1;
-            }
+
             this.fileSystemProvider.SerializeTestRun(testRun);
 
-            return areAllTestsGreen;
+            int exitCode = 0;
+            if (failedTests.Count > 0)
+            {
+                exitCode = 1;
+            }
+
+            return exitCode;
         }
     }
 }

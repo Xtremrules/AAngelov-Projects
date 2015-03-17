@@ -2,57 +2,33 @@ using System.Xml.Serialization;
 
 namespace MSTest.Console.Extended.Data
 {
-    /// <remarks/>
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010")]
     public partial class TestRunTestSettings
     {
-        private TestRunTestSettingsExecution executionField;
-
-        private TestRunTestSettingsDeployment deploymentField;
-
-        private string nameField;
-
-        private string idField;
-
-        /// <remarks/>
         public TestRunTestSettingsExecution Execution
         {
-            get
-            {
-                return this.executionField;
-            }
-            set
-            {
-                this.executionField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public string name
+        public TestRunTestSettingsDeployment Deployment
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public string id
+        [XmlAttributeAttribute("name")]
+        public string Name
         {
-            get
-            {
-                return this.idField;
-            }
-            set
-            {
-                this.idField = value;
-            }
+            get;
+            set;
+        }
+
+        [XmlAttributeAttribute("id")]
+        public string Id
+        {
+            get;
+            set;
         }
     }
 }

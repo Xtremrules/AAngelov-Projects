@@ -2,116 +2,58 @@ using System.Xml.Serialization;
 
 namespace MSTest.Console.Extended.Data
 {
-    /// <remarks/>
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010")]
     public partial class TestRunUnitTest
     {
-        private TestRunUnitTestExecution executionField;
-
-        private TestRunUnitTestTestMethod testMethodField;
-
-        private TestRunUnitTestOwners ownersField;
-
-        private TestRunUnitTestTestCategory testCategoryField;
-
-        private string nameField;
-
-        private string storageField;
-
-        private string idField;
-
-        /// <remarks/>
         public TestRunUnitTestOwners Owners
         {
-            get
-            {
-                return this.ownersField;
-            }
-            set
-            {
-                this.ownersField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
         public TestRunUnitTestTestCategory TestCategory
         {
-            get
-            {
-                return this.testCategoryField;
-            }
-            set
-            {
-                this.testCategoryField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
         public TestRunUnitTestExecution Execution
         {
-            get
-            {
-                return this.executionField;
-            }
-            set
-            {
-                this.executionField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
         public TestRunUnitTestTestMethod TestMethod
         {
-            get
-            {
-                return this.testMethodField;
-            }
-            set
-            {
-                this.testMethodField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public string name
+        public string Extension
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public string storage
+        [XmlAttributeAttribute("name")]
+        public string Name
         {
-            get
-            {
-                return this.storageField;
-            }
-            set
-            {
-                this.storageField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public string id
+        [XmlAttributeAttribute("storage")]
+        public string Storage
         {
-            get
-            {
-                return this.idField;
-            }
-            set
-            {
-                this.idField = value;
-            }
+            get;
+            set;
+        }
+
+        [XmlAttributeAttribute("id")]
+        public string Id
+        {
+            get;
+            set;
         }
     }
 }

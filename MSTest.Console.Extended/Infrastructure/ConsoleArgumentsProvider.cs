@@ -9,12 +9,12 @@ namespace MSTest.Console.Extended.Infrastructure
 {
     public class ConsoleArgumentsProvider : IConsoleArgumentsProvider
     {
-        private readonly string testResultFilePathRegexPattern = @".*resultsfile:(?<ResultsFilePath>[1-9A-Za-z\\:._]{1,})";
-        private readonly string testNewResultFilePathRegexPattern = @".*(?<NewResultsFilePathArgument>/newResultsfile:(?<NewResultsFilePath>[1-9A-Za-z\\:._]{1,}))";
-        private readonly string retriesRegexPattern = @".*(?<RetriesArgument>/retriesCount:(?<RetriesCount>[0-9]{1})).*";
-        private readonly string failedTestsThresholdRegexPattern = @".*(?<ThresholdArgument>/threshold:(?<ThresholdCount>[0-9]{1})).*";
-        private readonly string deleteOldFilesRegexPattern = @".*(?<DeleteOldFilesArgument>/deleteOldResultsFiles:(?<DeleteOldFilesValue>[a-zA-Z]{4,5})).*";
-        private readonly string argumentRegexPattern = @".*/(?<ArgumentName>[a-zA-Z]{1,}):(?<ArgumentValue>.*)";
+        private const string TestResultFilePathRegexPattern = @".*resultsfile:(?<ResultsFilePath>[1-9A-Za-z\\:._]{1,})";
+        private const string NewTestResultFilePathRegexPattern = @".*(?<NewResultsFilePathArgument>/newResultsfile:(?<NewResultsFilePath>[1-9A-Za-z\\:._]{1,}))";
+        private const string RetriesCountRegexPattern = @".*(?<RetriesArgument>/retriesCount:(?<RetriesCount>[0-9]{1})).*";
+        private const string FailedTestsThresholdRegexPattern = @".*(?<ThresholdArgument>/threshold:(?<ThresholdCount>[0-9]{1})).*";
+        private const string DeleteOldFilesRegexPattern = @".*(?<DeleteOldFilesArgument>/deleteOldResultsFiles:(?<DeleteOldFilesValue>[a-zA-Z]{4,5})).*";
+        private const string ArgumentRegexPattern = @".*/(?<ArgumentName>[a-zA-Z]{1,}):(?<ArgumentValue>.*)";
 
         public ConsoleArgumentsProvider(string[] arguments)
         {
@@ -23,11 +23,11 @@ namespace MSTest.Console.Extended.Infrastructure
             this.InitializeNewTestResultsPath();
             this.InitializeRetriesCount();
             this.InitializeFailedTestsThreshold();
-            this.InitializeDeleteOldResultFiles(); 
+            this.InitializeDeleteOldResultFiles();
         }
 
         public string ConsoleArguments { get; set; }
-        
+
         public string TestResultPath { get; set; }
 
         public string NewTestResultPath { get; set; }
@@ -40,19 +40,22 @@ namespace MSTest.Console.Extended.Infrastructure
 
         private void InitializeTestResultsPath()
         {
-            Regex r1 = new Regex(this.testResultFilePathRegexPattern, RegexOptions.Singleline);
-            Match currentMatch = r1.Match(this.ConsoleArguments);
+            Regex testResultsPathRegex = new Regex(TestResultFilePathRegexPattern, RegexOptions.Singleline);
+            Match currentMatch = testResultsPathRegex.Match(this.ConsoleArguments);
+
             if (!currentMatch.Success)
             {
                 throw new ArgumentException("You need to specify path to test results.");
             }
+
             this.TestResultPath = currentMatch.Groups["ResultsFilePath"].Value;
         }
 
         private void InitializeNewTestResultsPath()
         {
-            Regex r1 = new Regex(this.testNewResultFilePathRegexPattern, RegexOptions.Singleline);
-            Match currentMatch = r1.Match(this.ConsoleArguments);
+            Regex newTestResultsPathRegex = new Regex(NewTestResultFilePathRegexPattern, RegexOptions.Singleline);
+            Match currentMatch = newTestResultsPathRegex.Match(this.ConsoleArguments);
+
             if (!currentMatch.Success)
             {
                 this.NewTestResultPath = this.TestResultPath;
@@ -66,8 +69,9 @@ namespace MSTest.Console.Extended.Infrastructure
 
         private void InitializeRetriesCount()
         {
-            Regex r1 = new Regex(this.retriesRegexPattern, RegexOptions.Singleline);
-            Match currentMatch = r1.Match(this.ConsoleArguments);
+            Regex retriesCountRegex = new Regex(RetriesCountRegexPattern, RegexOptions.Singleline);
+            Match currentMatch = retriesCountRegex.Match(this.ConsoleArguments);
+
             if (!currentMatch.Success)
             {
                 this.RetriesCount = 0;
@@ -81,8 +85,9 @@ namespace MSTest.Console.Extended.Infrastructure
 
         private void InitializeFailedTestsThreshold()
         {
-            Regex r1 = new Regex(this.failedTestsThresholdRegexPattern, RegexOptions.Singleline);
-            Match currentMatch = r1.Match(this.ConsoleArguments);
+            Regex failedTestsThresholdRegex = new Regex(FailedTestsThresholdRegexPattern, RegexOptions.Singleline);
+            Match currentMatch = failedTestsThresholdRegex.Match(this.ConsoleArguments);
+
             if (!currentMatch.Success)
             {
                 this.FailedTestsThreshold = int.Parse(ConfigurationManager.AppSettings["ThresholdDefaultPercentage"]);
@@ -96,8 +101,9 @@ namespace MSTest.Console.Extended.Infrastructure
 
         private void InitializeDeleteOldResultFiles()
         {
-            Regex r1 = new Regex(this.deleteOldFilesRegexPattern, RegexOptions.Singleline);
-            Match currentMatch = r1.Match(this.ConsoleArguments);
+            Regex deleteOldResultsRegex = new Regex(DeleteOldFilesRegexPattern, RegexOptions.Singleline);
+            Match currentMatch = deleteOldResultsRegex.Match(this.ConsoleArguments);
+
             if (!currentMatch.Success)
             {
                 this.ShouldDeleteOldTestResultFiles = false;
@@ -112,14 +118,17 @@ namespace MSTest.Console.Extended.Infrastructure
         private string InitializeInitialConsoleArguments(string[] arguments)
         {
             StringBuilder sb = new StringBuilder();
-            foreach (var currentArgument in arguments)
+
+            foreach (var argument in arguments)
             {
-                string currentValueToBeAppended = currentArgument;
-                KeyValuePair<string, string> currentArgumentPair = this.SplitArgumentNameAndValue(currentArgument);
+                string currentValueToBeAppended = argument;
+                KeyValuePair<string, string> currentArgumentPair = this.SplitArgumentNameAndValue(argument);
+
                 if (currentArgumentPair.Key != null && currentArgumentPair.Value.Contains(" "))
                 {
                     currentValueToBeAppended = string.Concat("/", currentArgumentPair.Key, ":", "\"", currentArgumentPair.Value, "\"");
                 }
+
                 sb.AppendFormat("{0} ", currentValueToBeAppended);
             }
             return sb.ToString().TrimEnd();
@@ -128,8 +137,9 @@ namespace MSTest.Console.Extended.Infrastructure
         private KeyValuePair<string, string> SplitArgumentNameAndValue(string argument)
         {
             KeyValuePair<string, string> argumentPair = new KeyValuePair<string, string>();
-            Regex regexPattern = new Regex(this.argumentRegexPattern, RegexOptions.Singleline);
-            Match currentMatch = regexPattern.Match(argument);
+            Regex argumentPairRegex = new Regex(ArgumentRegexPattern, RegexOptions.Singleline);
+            Match currentMatch = argumentPairRegex.Match(argument);
+
             if (currentMatch.Success)
             {
                 argumentPair = new KeyValuePair<string, string>(currentMatch.Groups["ArgumentName"].Value, currentMatch.Groups["ArgumentValue"].Value);

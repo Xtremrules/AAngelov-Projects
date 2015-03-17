@@ -22,7 +22,7 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
             var testRun = fileSystemProvider.DeserializeTestRun("NoExceptions.trx");
             
             var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, log);
-            var passedTests = microsoftTestTestRunProvider.GetAllPassesTests(testRun);
+            var passedTests = microsoftTestTestRunProvider.GetAllPassedTests(testRun);
             Assert.AreEqual<int>(2, passedTests.Count);
         }
 
@@ -38,7 +38,7 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
             var testRun = fileSystemProvider.DeserializeTestRun("Exceptions.trx");
             
             var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, log);
-            var passedTests = microsoftTestTestRunProvider.GetAllPassesTests(testRun);
+            var passedTests = microsoftTestTestRunProvider.GetAllPassedTests(testRun);
             Assert.AreEqual<int>(1, passedTests.Count);
         }
     }

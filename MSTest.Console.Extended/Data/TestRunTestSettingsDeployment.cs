@@ -2,56 +2,28 @@ using System.Xml.Serialization;
 
 namespace MSTest.Console.Extended.Data
 {
-    /// <remarks/>
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010")]
     public partial class TestRunTestSettingsDeployment
     {
-        private string userDeploymentRootField;
-
-        private bool useDefaultDeploymentRootField;
-
-        private string runDeploymentRootField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string userDeploymentRoot
+        [XmlAttributeAttribute("userDeploymentRoot")]
+        public string UserDeploymentRoot
         {
-            get
-            {
-                return this.userDeploymentRootField;
-            }
-            set
-            {
-                this.userDeploymentRootField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public bool useDefaultDeploymentRoot
+        [XmlAttributeAttribute("useDefaultDeploymentRoot")]
+        public bool UseDefaultDeploymentRoot
         {
-            get
-            {
-                return this.useDefaultDeploymentRootField;
-            }
-            set
-            {
-                this.useDefaultDeploymentRootField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string runDeploymentRoot
+        [XmlAttributeAttribute("runDeploymentRoot")]
+        public string RunDeploymentRoot
         {
-            get
-            {
-                return this.runDeploymentRootField;
-            }
-            set
-            {
-                this.runDeploymentRootField = value;
-            }
+            get;
+            set;
         }
     }
 }

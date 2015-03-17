@@ -2,264 +2,119 @@ using System.Xml.Serialization;
 
 namespace MSTest.Console.Extended.Data
 {
-    /// <remarks/>
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010")]
     public partial class TestRunResultSummaryCounters
     {
-        private byte totalField;
-
-        private byte executedField;
-
-        private byte passedField;
-
-        private byte errorField;
-
-        private byte failedField;
-
-        private byte timeoutField;
-
-        private byte abortedField;
-
-        private byte inconclusiveField;
-
-        private byte passedButRunAbortedField;
-
-        private byte notRunnableField;
-
-        private byte notExecutedField;
-
-        private byte disconnectedField;
-
-        private byte warningField;
-
-        private byte completedField;
-
-        private byte inProgressField;
-
-        private byte pendingField;
-
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public byte total
+        [XmlAttributeAttribute("total")]
+        public byte Total
         {
-            get
-            {
-                return this.totalField;
-            }
-            set
-            {
-                this.totalField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public byte executed
+        [XmlAttributeAttribute("executed")]
+        public byte Executed
         {
-            get
-            {
-                return this.executedField;
-            }
-            set
-            {
-                this.executedField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public byte passed
+        [XmlAttributeAttribute("passed")]
+        public byte Passed
         {
-            get
-            {
-                return this.passedField;
-            }
-            set
-            {
-                this.passedField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public byte error
+        [XmlAttributeAttribute("error")]
+        public byte Error
         {
-            get
-            {
-                return this.errorField;
-            }
-            set
-            {
-                this.errorField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public byte failed
+        [XmlAttributeAttribute("failed")]
+        public byte Failed
         {
-            get
-            {
-                return this.failedField;
-            }
-            set
-            {
-                this.failedField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public byte timeout
+        [XmlAttributeAttribute("timeout")]
+        public byte Timeout
         {
-            get
-            {
-                return this.timeoutField;
-            }
-            set
-            {
-                this.timeoutField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public byte aborted
+        [XmlAttributeAttribute("aborted")]
+        public byte Aborted
         {
-            get
-            {
-                return this.abortedField;
-            }
-            set
-            {
-                this.abortedField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public byte inconclusive
+        [XmlAttributeAttribute("inconclusive")]
+        public byte Inconclusive
         {
-            get
-            {
-                return this.inconclusiveField;
-            }
-            set
-            {
-                this.inconclusiveField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public byte passedButRunAborted
+        [XmlAttributeAttribute("passedButRunAborted")]
+        public byte PassedButRunAborted
         {
-            get
-            {
-                return this.passedButRunAbortedField;
-            }
-            set
-            {
-                this.passedButRunAbortedField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public byte notRunnable
+        [XmlAttributeAttribute("notRunnable")]
+        public byte NotRunnable
         {
-            get
-            {
-                return this.notRunnableField;
-            }
-            set
-            {
-                this.notRunnableField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public byte notExecuted
+        [XmlAttributeAttribute("notExecuted")]
+        public byte NotExecuted
         {
-            get
-            {
-                return this.notExecutedField;
-            }
-            set
-            {
-                this.notExecutedField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public byte disconnected
+        [XmlAttributeAttribute("disconnected")]
+        public byte Disconnected
         {
-            get
-            {
-                return this.disconnectedField;
-            }
-            set
-            {
-                this.disconnectedField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public byte warning
+        [XmlAttributeAttribute("warning")]
+        public byte Warning
         {
-            get
-            {
-                return this.warningField;
-            }
-            set
-            {
-                this.warningField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public byte completed
+        [XmlAttributeAttribute("completed")]
+        public byte Completed
         {
-            get
-            {
-                return this.completedField;
-            }
-            set
-            {
-                this.completedField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public byte inProgress
+        [XmlAttributeAttribute("inProgress")]
+        public byte InProgress
         {
-            get
-            {
-                return this.inProgressField;
-            }
-            set
-            {
-                this.inProgressField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public byte pending
+        [XmlAttributeAttribute("pending")]
+        public byte Pending
         {
-            get
-            {
-                return this.pendingField;
-            }
-            set
-            {
-                this.pendingField = value;
-            }
+            get;
+            set;
         }
     }
 }

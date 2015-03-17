@@ -25,9 +25,9 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
             var passedTestRun = fileSystemProvider.DeserializeTestRun("NoExceptions.trx");
             var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, log);
 
-            var passedTests = microsoftTestTestRunProvider.GetAllPassesTests(passedTestRun);
+            var passedTests = microsoftTestTestRunProvider.GetAllPassedTests(passedTestRun);
             var failedTests = microsoftTestTestRunProvider.GetAllNotPassedTests(failedTestsRun.Results.ToList());
-            passedTests.ForEach(x => x.testId = Guid.NewGuid().ToString());
+            passedTests.ForEach(x => x.TestId = Guid.NewGuid().ToString());
 
             microsoftTestTestRunProvider.UpdatePassedTests(passedTests, failedTestsRun.Results.ToList());
 

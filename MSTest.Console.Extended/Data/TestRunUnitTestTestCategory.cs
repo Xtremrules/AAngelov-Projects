@@ -1,20 +1,14 @@
-/// <remarks/>
+using System.Xml.Serialization;
 
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class TestRunUnitTestTestCategory
+namespace MSTest.Console.Extended.Data
 {
-    private UnitTestTestCategoryTestCategoryItem testCategoryItemField;
-
-    /// <remarks/>
-    public UnitTestTestCategoryTestCategoryItem TestCategoryItem
+    [XmlTypeAttribute(AnonymousType = true)]
+    public partial class TestRunUnitTestTestCategory
     {
-        get
+        public UnitTestTestCategoryTestCategoryItem TestCategoryItem
         {
-            return this.testCategoryItemField;
-        }
-        set
-        {
-            this.testCategoryItemField = value;
+            get;
+            set;
         }
     }
 }

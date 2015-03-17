@@ -4,214 +4,107 @@ using System.Xml.Serialization;
 
 namespace MSTest.Console.Extended.Data
 {
-    /// <remarks/>
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010")]
     public partial class TestRunUnitTestResult
     {
-        private TestRunUnitTestResultOutput outputField;
-
-        private string executionIdField;
-
-        private string testIdField;
-
-        private string testNameField;
-
-        private string computerNameField;
-
-        private System.TimeSpan durationField;
-
-        private System.DateTime startTimeField;
-
-        private System.DateTime endTimeField;
-
-        private string testTypeField;
-
-        private string outcomeField;
-
-        private string testListIdField;
-
-        private string relativeResultsDirectoryField;
-
-        /// <remarks/>
         public TestRunUnitTestResultOutput Output
         {
-            get
-            {
-                return this.outputField;
-            }
-            set
-            {
-                this.outputField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public string executionId
-        {
-            get
-            {
-                return this.executionIdField;
-            }
-            set
-            {
-                this.executionIdField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public string testId
+        [XmlAttributeAttribute("executionId")]
+        public string ExecutionId
         {
-            get
-            {
-                return this.testIdField;
-            }
-            set
-            {
-                this.testIdField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public string testName
+        [XmlAttributeAttribute("testId")]
+        public string TestId
         {
-            get
-            {
-                return this.testNameField;
-            }
-            set
-            {
-                this.testNameField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public string computerName
+        [XmlAttributeAttribute("testName")]
+        public string TestName
         {
-            get
-            {
-                return this.computerNameField;
-            }
-            set
-            {
-                this.computerNameField = value;
-            }
+            get;
+            set;
+        }
+
+        [XmlAttributeAttribute("computerName")]
+        public string ComputerName
+        {
+            get;
+            set;
         }
 
         [XmlIgnore]
-        public TimeSpan duration
+        [XmlAttributeAttribute("duration")]
+        public TimeSpan Duartion
         {
-            get
-            { 
-                return this.durationField;
-            }
-            set
-            {
-                this.durationField = value;
-            }
+            get;
+            set;
         }
-        
+
         // XmlSerializer does not support TimeSpan, so use this property for 
         // serialization instead.
         [Browsable(false)]
         [XmlAttributeAttribute(DataType = "duration", AttributeName = "duration")]
         public string DurationString
         {
-            get 
-            { 
-                return this.duration.ToString(); 
-            }
-            set 
-            {
-                this.duration = string.IsNullOrEmpty(value) ? TimeSpan.Zero : TimeSpan.Parse(value);
-            }
-        }
-
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public System.DateTime startTime
-        {
             get
             {
-                return this.startTimeField;
+                return this.Duartion.ToString();
             }
             set
             {
-                this.startTimeField = value;
+                this.Duartion = string.IsNullOrEmpty(value) ? TimeSpan.Zero : TimeSpan.Parse(value);
             }
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public System.DateTime endTime
+        [XmlAttributeAttribute("startTime")]
+        public DateTime StartTime
         {
-            get
-            {
-                return this.endTimeField;
-            }
-            set
-            {
-                this.endTimeField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public string testType
+        [XmlAttributeAttribute("endTime")]
+        public DateTime EndTime
         {
-            get
-            {
-                return this.testTypeField;
-            }
-            set
-            {
-                this.testTypeField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public string outcome
+        [XmlAttributeAttribute("testType")]
+        public string TestType
         {
-            get
-            {
-                return this.outcomeField;
-            }
-            set
-            {
-                this.outcomeField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public string testListId
+        [XmlAttributeAttribute("outcome")]
+        public string Outcome
         {
-            get
-            {
-                return this.testListIdField;
-            }
-            set
-            {
-                this.testListIdField = value;
-            }
+            get;
+            set;
         }
 
-        /// <remarks/>
-        [XmlAttributeAttribute]
-        public string relativeResultsDirectory
+        [XmlAttributeAttribute("testListId")]
+        public string TestListId
         {
-            get
-            {
-                return this.relativeResultsDirectoryField;
-            }
-            set
-            {
-                this.relativeResultsDirectoryField = value;
-            }
+            get;
+            set;
+        }
+
+        [XmlAttributeAttribute("relativeResultsDirectory")]
+        public string RelativeResultsDirectory
+        {
+            get;
+            set;
         }
     }
 }

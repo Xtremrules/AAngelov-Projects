@@ -28,7 +28,7 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
             microsoftTestTestRunProvider.UpdatePassedTests(failedTests, failedTestsRun.Results.ToList());
             microsoftTestTestRunProvider.UpdateResultsSummary(failedTestsRun);
 
-            Assert.AreEqual<int>(2, failedTestsRun.ResultSummary.Counters.passed);
+            Assert.AreEqual<int>(2, failedTestsRun.ResultSummary.Counters.Passed);
         }
 
         [TestMethod]
@@ -45,7 +45,7 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
 
             microsoftTestTestRunProvider.UpdateResultsSummary(failedTestsRun);
 
-            Assert.AreEqual<int>(1, failedTestsRun.ResultSummary.Counters.passed);
+            Assert.AreEqual<int>(1, failedTestsRun.ResultSummary.Counters.Passed);
         }
 
         [TestMethod]
@@ -65,7 +65,7 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
             microsoftTestTestRunProvider.UpdatePassedTests(failedTests, failedTestsRun.Results.ToList());
             microsoftTestTestRunProvider.UpdateResultsSummary(failedTestsRun);
 
-            Assert.AreEqual<string>("Passed", failedTestsRun.ResultSummary.outcome);
+            Assert.AreEqual<string>("Passed", failedTestsRun.ResultSummary.Outcome);
         }
 
         [TestMethod]
@@ -82,7 +82,7 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
 
             microsoftTestTestRunProvider.UpdateResultsSummary(failedTestsRun);
 
-            Assert.AreEqual<string>("Failed", failedTestsRun.ResultSummary.outcome);
+            Assert.AreEqual<string>("Failed", failedTestsRun.ResultSummary.Outcome);
         }
 
         [TestMethod]
@@ -102,7 +102,7 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
             microsoftTestTestRunProvider.UpdatePassedTests(failedTests, failedTestsRun.Results.ToList());
             microsoftTestTestRunProvider.UpdateResultsSummary(failedTestsRun);
 
-            Assert.AreEqual<int>(0, failedTestsRun.ResultSummary.Counters.failed);
+            Assert.AreEqual<int>(0, failedTestsRun.ResultSummary.Counters.Failed);
         }
 
         [TestMethod]
@@ -119,7 +119,7 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
 
             microsoftTestTestRunProvider.UpdateResultsSummary(failedTestsRun);
 
-            Assert.AreEqual<int>(1, failedTestsRun.ResultSummary.Counters.failed);
+            Assert.AreEqual<int>(1, failedTestsRun.ResultSummary.Counters.Failed);
         }
     }
 }

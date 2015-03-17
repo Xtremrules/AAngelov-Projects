@@ -7,7 +7,7 @@ namespace MSTest.Console.Extended.Interfaces
     {
         void UpdatePassedTests(List<TestRunUnitTestResult> passedTests, List<TestRunUnitTestResult> allTests);
 
-        List<TestRunUnitTestResult> GetAllPassesTests(TestRun testRun);
+        List<TestRunUnitTestResult> GetAllPassedTests(TestRun testRun);
 
         List<TestRunUnitTestResult> GetAllNotPassedTests(List<TestRunUnitTestResult> allTests);
 

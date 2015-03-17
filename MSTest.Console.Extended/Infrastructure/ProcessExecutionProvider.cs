@@ -26,23 +26,28 @@ namespace MSTest.Console.Extended.Infrastructure
             {
                 arguments = this.consoleArgumentsProvider.ConsoleArguments;
             }
-            this.CurrentProcess = new Process();
+
             ProcessStartInfo processStartInfo = new ProcessStartInfo(this.MicrosoftTestConsoleExePath, arguments);
             processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
             processStartInfo.RedirectStandardOutput = true;
             processStartInfo.RedirectStandardError = true;
             processStartInfo.UseShellExecute = false;
+
+            this.CurrentProcess = new Process();
             this.CurrentProcess.StartInfo = processStartInfo;
             this.CurrentProcess.OutputDataReceived += (sender, args) =>
             {
                 System.Console.WriteLine(args.Data);
                 this.log.Info(args.Data);
             };
+
             this.CurrentProcess.Start();
+
             if (this.CurrentProcess != null)
             {
                 this.CurrentProcess.BeginErrorReadLine();
             }
+
             if (this.CurrentProcess != null)
             {
                 this.CurrentProcess.BeginOutputReadLine();
