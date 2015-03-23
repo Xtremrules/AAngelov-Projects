@@ -8,20 +8,27 @@ namespace MSTest.Console.Extended
 {
     public class Program
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(Program));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(Program));
 
         public static void Main(string[] arguments)
         {
             string microsoftTestConsoleExePath = ConfigurationManager.AppSettings["MSTestConsoleRunnerPath"];
 
             var consoleArgumentsProvider = new ConsoleArgumentsProvider(arguments);
-            
+
+            var testRunProviderLogger = LogManager.GetLogger(typeof(MsTestTestRunProvider));
+            var testRunprovider = new MsTestTestRunProvider(consoleArgumentsProvider, testRunProviderLogger);
+            var fileSystemProvider = new FileSystemProvider(consoleArgumentsProvider);
+            var processExecutionProvider = new ProcessExecutionProvider(microsoftTestConsoleExePath, consoleArgumentsProvider, LogManager.GetLogger(typeof(ProcessExecutionProvider)));
+            var testExecutionProviderLogger = LogManager.GetLogger(typeof(TestExecutionService));
+
             var engine = new TestExecutionService(
-                new MsTestTestRunProvider(consoleArgumentsProvider, LogManager.GetLogger(typeof(MsTestTestRunProvider))),
-                new FileSystemProvider(consoleArgumentsProvider),
-                new ProcessExecutionProvider(microsoftTestConsoleExePath, consoleArgumentsProvider, LogManager.GetLogger(typeof(ProcessExecutionProvider))),
+                testRunprovider,
+                fileSystemProvider,
+                processExecutionProvider,
                 consoleArgumentsProvider,
-                LogManager.GetLogger(typeof(TestExecutionService)));
+                testExecutionProviderLogger);
+
             try
             {
                 int result = engine.ExecuteWithRetry();
@@ -29,7 +36,7 @@ namespace MSTest.Console.Extended
             }
             catch (Exception ex)
             {
-                log.Error(string.Concat(ex.Message, ex.StackTrace));
+                Logger.Error(string.Concat(ex.Message, ex.StackTrace));
             }
         }
     }
