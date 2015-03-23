@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using log4net;
 using MSTest.Console.Extended.Data;
 using MSTest.Console.Extended.Interfaces;
-using log4net;
 
 namespace MSTest.Console.Extended.Infrastructure
 {
@@ -24,24 +25,6 @@ namespace MSTest.Console.Extended.Infrastructure
             this.log = log;
         }
 
-        public void UpdateInitialTestRun(TestRun initialTestRun, TestRun retryTestRun)
-        {
-            var initialResults = initialTestRun.Results.ToList();
-            foreach (var retryResult in retryTestRun.Results)
-            {
-                var initialResult = initialTestRun.Results.Where(x=>x.TestId == retryResult.TestId).First();
-                var initialResultIndex = initialResults.IndexOf(initialResult);
-
-                this.fileSystemProvider.ReplaceTestResultFiles(initialTestRun, initialResult, retryTestRun, retryResult);
-
-                TestRunUnitTestResult updatedTestResult = this.UpdateTestResultInformation(initialResult, retryResult);
-                initialTestRun.Results[initialResultIndex] = updatedTestResult;
-            }
-
-            this.UpdateResultsSummary(initialTestRun);
-        }
-
-        
         public List<TestRunUnitTestResult> GetAllNotPassedTests(List<TestRunUnitTestResult> allTests)
         {
             List<TestRunUnitTestResult> failedTests = new List<TestRunUnitTestResult>();
@@ -50,19 +33,15 @@ namespace MSTest.Console.Extended.Infrastructure
             return failedTests;
         }
 
-        private void UpdateResultsSummary(TestRun testRun)
+        public int CalculatedFailedTestsPercentage(List<TestRunUnitTestResult> failedTests, List<TestRunUnitTestResult> allTests)
         {
-            testRun.ResultSummary.Counters.Failed = this.GetSpecificOutcomeTestsCount(testRun, FailedOutocme);
-            testRun.ResultSummary.Counters.Passed = this.GetSpecificOutcomeTestsCount(testRun, PassedOutcome);
+            double result = 0;
+            if (allTests.Count > 0)
+            {
+                result = ((double)failedTests.Count / (double)allTests.Count) * 100;
+            }
 
-            if (testRun.ResultSummary.Counters.Passed != testRun.ResultSummary.Counters.Executed)
-            {
-                testRun.ResultSummary.Outcome = FailedOutocme;
-            }
-            else
-            {
-                testRun.ResultSummary.Outcome = PassedOutcome;
-            }
+            return (int)result;
         }
 
         public string GenerateAdditionalArgumentsForFailedTestsRun(List<TestRunUnitTestResult> failedTests, string newTestResultFilePath)
@@ -84,29 +63,73 @@ namespace MSTest.Console.Extended.Infrastructure
             return additionalArgumentsForFailedTestsRun;
         }
 
-        public int CalculatedFailedTestsPercentage(List<TestRunUnitTestResult> failedTests, List<TestRunUnitTestResult> allTests)
+        public void UpdateTestRun(TestRun source, TestRun target)
         {
-            double result = 0;
-            if (allTests.Count > 0)
+            var targetResults = target.Results.ToList();
+            foreach (var sourceResult in source.Results)
             {
-                result = ((double)failedTests.Count / (double)allTests.Count) * 100;
+                var targetResult = targetResults.Where(x => x.TestId == sourceResult.TestId).First();
+                
+                var sourceResultFilesPaths = this.GetTestResultFilesPaths(source, sourceResult);
+                var targetResultFilesPaths = this.GetTestResultFilesPaths(target, targetResult);
+                this.fileSystemProvider.ReplaceFiles(sourceResultFilesPaths, targetResultFilesPaths);
+
+                TestRunUnitTestResult updatedTestResult = this.GetUpdatedTestResult(sourceResult, targetResult);
+                var targetResultIndex = targetResults.IndexOf(targetResult);
+                target.Results[targetResultIndex] = updatedTestResult;
             }
 
-            return (int)result;
+            this.UpdateResultsSummary(target);
         }
 
-        private TestRunUnitTestResult UpdateTestResultInformation(TestRunUnitTestResult originalResult, TestRunUnitTestResult retryResult)
+        private IList<string> GetTestResultFilesPaths(TestRun run, TestRunUnitTestResult result)
         {
-            TestRunUnitTestResult updatedResult = retryResult;
+            IList<string> filesPaths = new List<string>();
 
-            updatedResult.ExecutionId = originalResult.ExecutionId;
-            updatedResult.RelativeResultsDirectory = originalResult.RelativeResultsDirectory;
+            if (result.ResultFiles != null && result.ResultFiles.Length > 0)
+            {
+                string baseResultsFolder = Path.Combine(run.TestSettings.Deployment.UserDeploymentRoot,
+                      run.TestSettings.Deployment.RunDeploymentRoot,
+                      "In",
+                      result.ExecutionId);
+
+                foreach (var file in result.ResultFiles)
+                {
+                    string filePath = Path.Combine(baseResultsFolder, file.Path);
+                    filesPaths.Add(filePath);
+                }
+            }
+
+            return filesPaths;
+        }
+
+        private void UpdateResultsSummary(TestRun testRun)
+        {
+            testRun.ResultSummary.Counters.Failed = this.GetSpecificOutcomeTestsCount(testRun, FailedOutocme);
+            testRun.ResultSummary.Counters.Passed = this.GetSpecificOutcomeTestsCount(testRun, PassedOutcome);
+
+            if (testRun.ResultSummary.Counters.Passed != testRun.ResultSummary.Counters.Executed)
+            {
+                testRun.ResultSummary.Outcome = FailedOutocme;
+            }
+            else
+            {
+                testRun.ResultSummary.Outcome = PassedOutcome;
+            }
+        }
+
+        private TestRunUnitTestResult GetUpdatedTestResult(TestRunUnitTestResult source, TestRunUnitTestResult target)
+        {
+            TestRunUnitTestResult updatedResult = source;
+
+            updatedResult.ExecutionId = target.ExecutionId;
+            updatedResult.RelativeResultsDirectory = target.RelativeResultsDirectory;
 
             if (updatedResult.InnerResults != null)
             {
-                foreach (var innerResult in retryResult.InnerResults)
+                foreach (var innerResult in source.InnerResults)
                 {
-                    innerResult.ParentExecutionId = originalResult.ExecutionId;
+                    innerResult.ParentExecutionId = target.ExecutionId;
                 }
             }
 

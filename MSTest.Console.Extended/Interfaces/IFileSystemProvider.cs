@@ -1,4 +1,6 @@
-﻿using MSTest.Console.Extended.Data;
+﻿using System;
+using System.Collections.Generic;
+using MSTest.Console.Extended.Data;
 
 namespace MSTest.Console.Extended.Interfaces
 {
@@ -10,6 +12,6 @@ namespace MSTest.Console.Extended.Interfaces
 
         void DeleteTestResultFiles();
 
-        void ReplaceTestResultFiles(TestRun originalTestRun, TestRunUnitTestResult originalResult, TestRun retryTestRun, TestRunUnitTestResult retryResult);
+        void ReplaceFiles(IList<string> sourceFiles, IList<string> destinationFiles);
     }
 }

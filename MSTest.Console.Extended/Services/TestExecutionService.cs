@@ -1,7 +1,7 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using log4net;
 using MSTest.Console.Extended.Interfaces;
-using System.IO;
 
 namespace MSTest.Console.Extended.Services
 {
@@ -58,7 +58,7 @@ namespace MSTest.Console.Extended.Services
 
                         var retryTestRun = this.fileSystemProvider.DeserializeTestRun(retryTestRunResultsFilePath);
 
-                        this.microsoftTestTestRunProvider.UpdateInitialTestRun(initialTestRun, retryTestRun);
+                        this.microsoftTestTestRunProvider.UpdateTestRun(retryTestRun, initialTestRun);
                     }
                     else
                     {

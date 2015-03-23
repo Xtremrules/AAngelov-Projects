@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using MSTest.Console.Extended.Data;
@@ -69,28 +70,26 @@ namespace MSTest.Console.Extended.Infrastructure
             }
         }
 
-        public void ReplaceTestResultFiles(TestRun originalTestRun, TestRunUnitTestResult originalResult, TestRun retryTestRun, TestRunUnitTestResult retryResult)
+        public void ReplaceFiles(IList<string> sourceFiles, IList<string> destinationFiles)
         {
-            string originalResultFilesDirectory = this.GetResultFilesDirectory(originalTestRun, originalResult);
-            string retryResultFilesDirectory = this.GetResultFilesDirectory(retryTestRun, retryResult);
-
-            if (!(Directory.Exists(originalResultFilesDirectory) && Directory.Exists(retryResultFilesDirectory)))
+            if (sourceFiles.Count != destinationFiles.Count)
             {
-                throw new DirectoryNotFoundException("Result files directory(ies) do not exist.");
+                string message = string.Format("Source and destination files have different count: source ({0}) - destination ({1})", sourceFiles.Count, destinationFiles.Count);
+                throw new InvalidOperationException(message);
             }
 
-            Directory.Delete(originalResultFilesDirectory, true);
-            Directory.Move(retryResultFilesDirectory, originalResultFilesDirectory);
-        }
+            for (int i = 0; i < sourceFiles.Count; i++)
+            {
+                var destinationFile = destinationFiles[i];
 
-        private string GetResultFilesDirectory(TestRun testRun, TestRunUnitTestResult testResult)
-        {
-            string resultFilesDirectory = Path.Combine(testRun.TestSettings.Deployment.UserDeploymentRoot,
-                testRun.TestSettings.Deployment.RunDeploymentRoot,
-                "In",
-                testResult.RelativeResultsDirectory);
+                if (File.Exists(destinationFile))
+                {
+                    File.Delete(destinationFile);
+                }
 
-            return resultFilesDirectory;
+                var sourceFile = sourceFiles[i];
+                File.Copy(sourceFile, destinationFile);
+            }
         }
     }
 }
