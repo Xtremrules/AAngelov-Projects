@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using log4net;
 using MSTest.Console.Extended.Interfaces;
+using System.IO;
 
 namespace MSTest.Console.Extended.Services
 {
@@ -36,10 +37,11 @@ namespace MSTest.Console.Extended.Services
 
             this.processExecutionProvider.ExecuteProcessWithAdditionalArguments();
             this.processExecutionProvider.CurrentProcessWaitForExit();
-            var testRun = this.fileSystemProvider.DeserializeTestRun();
+            var initialTestRun = this.fileSystemProvider.DeserializeTestRun();
 
-            var failedTests = this.microsoftTestTestRunProvider.GetAllNotPassedTests(testRun.Results.ToList());
-            int failedTestsPercentage = this.microsoftTestTestRunProvider.CalculatedFailedTestsPercentage(failedTests, testRun.Results.ToList());
+            //TestRunUpdater initialTestRunUpdater = new TestRunUpdater(TestRun initialTestRun);
+            var failedTests = this.microsoftTestTestRunProvider.GetAllNotPassedTests(initialTestRun.Results.ToList());
+            int failedTestsPercentage = this.microsoftTestTestRunProvider.CalculatedFailedTestsPercentage(failedTests, initialTestRun.Results.ToList());
 
             if (failedTestsPercentage < this.consoleArgumentsProvider.FailedTestsThreshold)
             {
@@ -48,29 +50,27 @@ namespace MSTest.Console.Extended.Services
                     this.log.InfoFormat("Start to execute again {0} failed tests.", failedTests.Count);
                     if (failedTests.Count > 0)
                     {
-                        string currentTestResultPath = this.fileSystemProvider.GetTempTrxFile();
-                        string retryRunArguments = this.microsoftTestTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(failedTests, currentTestResultPath);
+                        string retryTestRunResultsFilePath = this.GetRetryTestRunResultsFilePath(i + 1);
+                        string retryTestRunArguments = this.microsoftTestTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(failedTests, retryTestRunResultsFilePath);
 
-                        this.log.InfoFormat("Run {0} time with arguments {1}", i + 2, retryRunArguments);
-                        this.processExecutionProvider.ExecuteProcessWithAdditionalArguments(retryRunArguments);
+                        this.log.InfoFormat("Run {0} time with arguments {1}", i + 2, retryTestRunArguments);
+                        this.processExecutionProvider.ExecuteProcessWithAdditionalArguments(retryTestRunArguments);
                         this.processExecutionProvider.CurrentProcessWaitForExit();
 
-                        var currentTestRun = this.fileSystemProvider.DeserializeTestRun(currentTestResultPath);
-                        var passedTests = this.microsoftTestTestRunProvider.GetAllPassedTests(currentTestRun);
+                        var retryTestRun = this.fileSystemProvider.DeserializeTestRun(retryTestRunResultsFilePath);
 
-                        this.microsoftTestTestRunProvider.UpdatePassedTests(passedTests, testRun.Results.ToList());
-                        this.microsoftTestTestRunProvider.UpdateResultsSummary(testRun);
+                        this.microsoftTestTestRunProvider.UpdateInitialTestRun(initialTestRun, retryTestRun);
                     }
                     else
                     {
                         break;
                     }
 
-                    failedTests = this.microsoftTestTestRunProvider.GetAllNotPassedTests(testRun.Results.ToList());
+                    failedTests = this.microsoftTestTestRunProvider.GetAllNotPassedTests(initialTestRun.Results.ToList());
                 }
             }
 
-            this.fileSystemProvider.SerializeTestRun(testRun);
+            this.fileSystemProvider.SerializeTestRun(initialTestRun);
 
             int exitCode = 0;
             if (failedTests.Count > 0)
@@ -79,6 +79,18 @@ namespace MSTest.Console.Extended.Services
             }
 
             return exitCode;
+        }
+
+        private string GetRetryTestRunResultsFilePath(int retryIndex)
+        {
+            string initialResultsFileName = Path.GetFileNameWithoutExtension(this.consoleArgumentsProvider.TestResultPath);
+            string initialResultsDirectory = Path.GetDirectoryName(this.consoleArgumentsProvider.TestResultPath);
+
+            string retryResultsFileName = string.Format("{0}-Retry{1}.trx", initialResultsFileName, retryIndex);
+
+            string retryTestRunResultsFilePath = Path.Combine(initialResultsDirectory, retryResultsFileName); 
+
+            return retryTestRunResultsFilePath;
         }
     }
 }

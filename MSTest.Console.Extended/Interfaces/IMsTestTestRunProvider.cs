@@ -5,13 +5,9 @@ namespace MSTest.Console.Extended.Interfaces
 {
     public interface IMsTestTestRunProvider
     {
-        void UpdatePassedTests(List<TestRunUnitTestResult> passedTests, List<TestRunUnitTestResult> allTests);
-
-        List<TestRunUnitTestResult> GetAllPassedTests(TestRun testRun);
+        void UpdateInitialTestRun(TestRun originalTestRun, TestRun newTestRun);
 
         List<TestRunUnitTestResult> GetAllNotPassedTests(List<TestRunUnitTestResult> allTests);
-
-        void UpdateResultsSummary(TestRun testRun);
 
         string GenerateAdditionalArgumentsForFailedTestsRun(List<TestRunUnitTestResult> failedTests, string newTestResultFilePath);
 

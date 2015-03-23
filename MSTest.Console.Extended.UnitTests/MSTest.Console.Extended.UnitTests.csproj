@@ -67,13 +67,9 @@
     <Compile Include="FileSystemProviderTests\FileSystemProviderTests_DeleteTestResultFiles_Should.cs" />
     <Compile Include="FileSystemProviderTests\FileSystemProviderTests_DeserializeTestRun_Should.cs" />
     <Compile Include="FileSystemProviderTests\FileSystemProviderTests_SerializeTestRun_Should.cs" />
-    <Compile Include="FileSystemProviderTests\FileSystemProviderTests_GetTempTrxFile_Should.cs" />
     <Compile Include="MsTestTestRunProviderTests\MsTestTestRunProvider_GetFailedTestsPercent_Should.cs" />
     <Compile Include="MsTestTestRunProviderTests\MsTestTestRunProvider_GenerateAdditionalArgumentsForFailedTestsRun_Should.cs" />
-    <Compile Include="MsTestTestRunProviderTests\MsTestTestRunProvider_UpdateResultsSummary_Should.cs" />
-    <Compile Include="MsTestTestRunProviderTests\MsTestTestRunProvider_UpdatePassedTests_Should.cs" />
     <Compile Include="MsTestTestRunProviderTests\MsTestTestRunProvider_GetAllFailedTests_Should.cs" />
-    <Compile Include="MsTestTestRunProviderTests\MsTestTestRunProvider_GetAllPassesTests_Should.cs" />
     <Compile Include="ProcessExecutionProviderTests\ProcessExecutionProviderTests_CurrentProcessWaitForExit_Should.cs" />
     <Compile Include="ProcessExecutionProviderTests\ProcessExecutionProviderTests_ExecuteProcessWithAdditionalArguments_Should.cs" />
     <Compile Include="ConsoleArgumentsProviderTests\ConsoleArgumentsProvider_Constructor_Should.cs" />

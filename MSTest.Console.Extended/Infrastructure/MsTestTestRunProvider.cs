@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MSTest.Console.Extended.Data;
@@ -14,34 +15,33 @@ namespace MSTest.Console.Extended.Infrastructure
 
         private readonly ILog log;
         private readonly IConsoleArgumentsProvider consoleArgumentsProvider;
+        private readonly IFileSystemProvider fileSystemProvider;
 
         public MsTestTestRunProvider(IConsoleArgumentsProvider consoleArgumentsProvider, ILog log)
         {
             this.consoleArgumentsProvider = consoleArgumentsProvider;
+            this.fileSystemProvider = new FileSystemProvider(this.consoleArgumentsProvider);
             this.log = log;
         }
 
-        public List<TestRunUnitTestResult> GetAllPassedTests(TestRun testRun)
+        public void UpdateInitialTestRun(TestRun initialTestRun, TestRun retryTestRun)
         {
-            List<TestRunUnitTestResult> passedTests = new List<TestRunUnitTestResult>();
-
-            passedTests = testRun.Results.Where(x => x.Outcome.Equals(PassedOutcome)).ToList();
-            return passedTests;
-        }
-
-        public void UpdatePassedTests(List<TestRunUnitTestResult> passedTests, List<TestRunUnitTestResult> allTests)
-        {
-            foreach (var test in allTests)
+            var initialResults = initialTestRun.Results.ToList();
+            foreach (var retryResult in retryTestRun.Results)
             {
-                bool testPassed = passedTests.Any(x => x.TestId.Equals(test.TestId));
+                var initialResult = initialTestRun.Results.Where(x=>x.TestId == retryResult.TestId).First();
+                var initialResultIndex = initialResults.IndexOf(initialResult);
 
-                if (testPassed)
-                {
-                    test.Outcome = PassedOutcome;
-                }
+                this.fileSystemProvider.ReplaceTestResultFiles(initialTestRun, initialResult, retryTestRun, retryResult);
+
+                TestRunUnitTestResult updatedTestResult = this.UpdateTestResultInformation(initialResult, retryResult);
+                initialTestRun.Results[initialResultIndex] = updatedTestResult;
             }
+
+            this.UpdateResultsSummary(initialTestRun);
         }
 
+        
         public List<TestRunUnitTestResult> GetAllNotPassedTests(List<TestRunUnitTestResult> allTests)
         {
             List<TestRunUnitTestResult> failedTests = new List<TestRunUnitTestResult>();
@@ -50,12 +50,12 @@ namespace MSTest.Console.Extended.Infrastructure
             return failedTests;
         }
 
-        public void UpdateResultsSummary(TestRun testRun)
+        private void UpdateResultsSummary(TestRun testRun)
         {
-            testRun.ResultSummary.Counters.Failed = (byte)testRun.Results.ToList().Count(x => x.Outcome.Equals(FailedOutocme));
-            testRun.ResultSummary.Counters.Passed = (byte)testRun.Results.ToList().Count(x => x.Outcome.Equals(PassedOutcome));
+            testRun.ResultSummary.Counters.Failed = this.GetSpecificOutcomeTestsCount(testRun, FailedOutocme);
+            testRun.ResultSummary.Counters.Passed = this.GetSpecificOutcomeTestsCount(testRun, PassedOutcome);
 
-            if ((int)testRun.ResultSummary.Counters.Passed != testRun.Results.Length)
+            if (testRun.ResultSummary.Counters.Passed != testRun.ResultSummary.Counters.Executed)
             {
                 testRun.ResultSummary.Outcome = FailedOutocme;
             }
@@ -93,6 +93,43 @@ namespace MSTest.Console.Extended.Infrastructure
             }
 
             return (int)result;
+        }
+
+        private TestRunUnitTestResult UpdateTestResultInformation(TestRunUnitTestResult originalResult, TestRunUnitTestResult retryResult)
+        {
+            TestRunUnitTestResult updatedResult = retryResult;
+
+            updatedResult.ExecutionId = originalResult.ExecutionId;
+            updatedResult.RelativeResultsDirectory = originalResult.RelativeResultsDirectory;
+
+            if (updatedResult.InnerResults != null)
+            {
+                foreach (var innerResult in retryResult.InnerResults)
+                {
+                    innerResult.ParentExecutionId = originalResult.ExecutionId;
+                }
+            }
+
+            return updatedResult;
+        }
+
+        private int GetSpecificOutcomeTestsCount(TestRun testRun, string outcome)
+        {
+            int count = 0;
+            foreach (var result in testRun.Results)
+            {
+                if (result.Outcome == outcome)
+                {
+                    count++;
+                }
+
+                if (result.InnerResults != null)
+                {
+                    count += result.InnerResults.Where(x => x.Outcome == outcome).Count();
+                }
+            }
+
+            return count;
         }
     }
 }

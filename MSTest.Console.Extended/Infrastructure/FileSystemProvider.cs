@@ -69,9 +69,28 @@ namespace MSTest.Console.Extended.Infrastructure
             }
         }
 
-        public string GetTempTrxFile()
+        public void ReplaceTestResultFiles(TestRun originalTestRun, TestRunUnitTestResult originalResult, TestRun retryTestRun, TestRunUnitTestResult retryResult)
         {
-            return Path.GetTempFileName().Replace(".tmp", ".trx");
+            string originalResultFilesDirectory = this.GetResultFilesDirectory(originalTestRun, originalResult);
+            string retryResultFilesDirectory = this.GetResultFilesDirectory(retryTestRun, retryResult);
+
+            if (!(Directory.Exists(originalResultFilesDirectory) && Directory.Exists(retryResultFilesDirectory)))
+            {
+                throw new DirectoryNotFoundException("Result files directory(ies) do not exist.");
+            }
+
+            Directory.Delete(originalResultFilesDirectory, true);
+            Directory.Move(retryResultFilesDirectory, originalResultFilesDirectory);
+        }
+
+        private string GetResultFilesDirectory(TestRun testRun, TestRunUnitTestResult testResult)
+        {
+            string resultFilesDirectory = Path.Combine(testRun.TestSettings.Deployment.UserDeploymentRoot,
+                testRun.TestSettings.Deployment.RunDeploymentRoot,
+                "In",
+                testResult.RelativeResultsDirectory);
+
+            return resultFilesDirectory;
         }
     }
 }

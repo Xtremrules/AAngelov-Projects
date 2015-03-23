@@ -20,7 +20,7 @@ namespace MSTest.Console.Extended.Data
         }
 
         [XmlAttributeAttribute("passed")]
-        public byte Passed
+        public int Passed
         {
             get;
             set;
@@ -34,7 +34,7 @@ namespace MSTest.Console.Extended.Data
         }
 
         [XmlAttributeAttribute("failed")]
-        public byte Failed
+        public int Failed
         {
             get;
             set;

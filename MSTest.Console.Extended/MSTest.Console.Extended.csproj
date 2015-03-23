@@ -54,15 +54,23 @@
     <Compile Include="Data\TestRunResultSummaryOutput.cs" />
     <Compile Include="Data\TestRunResultSummaryRunInfos.cs" />
     <Compile Include="Data\TestRunResultSummaryRunInfosRunInfo.cs" />
+    <Compile Include="Data\TestRunUnitTestDataSource.cs" />
+    <Compile Include="Data\TestRunUnitTestDeploymentItem.cs" />
+    <Compile Include="Data\TestRunUnitTestResultBase.cs" />
+    <Compile Include="Data\TestRunUnitTestResultInnerUnitTestResult.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Data\TestRunUnitTestResultOutput.cs" />
     <Compile Include="Data\TestRunUnitTestResultOutputErrorInfo.cs" />
     <Compile Include="Data\TestRunUnitTestOwners.cs" />
+    <Compile Include="Data\TestRunUnitTestResultResultFile.cs" />
     <Compile Include="Data\UnitTestOwnersOwner.cs" />
     <Compile Include="Data\TestRunUnitTestTestCategory.cs" />
     <Compile Include="Data\UnitTestTestCategoryTestCategoryItem.cs" />
     <Compile Include="Infrastructure\ConsoleArgumentsProvider.cs" />
     <Compile Include="Infrastructure\FileSystemProvider.cs" />
     <Compile Include="Infrastructure\ProcessExecutionProvider.cs" />
+    <Compile Include="Infrastructure\TestRunUpdater.cs" />
     <Compile Include="Interfaces\IConsoleArgumentsProvider.cs" />
     <Compile Include="Interfaces\IFileSystemProvider.cs" />
     <Compile Include="Interfaces\IProcessExecutionProvider.cs" />

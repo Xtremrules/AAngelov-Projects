@@ -10,6 +10,6 @@ namespace MSTest.Console.Extended.Interfaces
 
         void DeleteTestResultFiles();
 
-        string GetTempTrxFile();
+        void ReplaceTestResultFiles(TestRun originalTestRun, TestRunUnitTestResult originalResult, TestRun retryTestRun, TestRunUnitTestResult retryResult);
     }
 }

@@ -17,6 +17,19 @@ namespace MSTest.Console.Extended.Data
             set;
         }
 
+        [XmlArrayItemAttribute("DeploymentItem")]
+        public TestRunUnitTestDeploymentItem[] DeploymentItems
+        {
+            get;
+            set;
+        }
+
+        public TestRunUnitTestDataSource DataSource
+        {
+            get;
+            set;
+        }
+
         public TestRunUnitTestExecution Execution
         {
             get;
