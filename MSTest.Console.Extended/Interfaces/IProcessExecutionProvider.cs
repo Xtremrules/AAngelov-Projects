@@ -4,12 +4,12 @@ namespace MSTest.Console.Extended.Interfaces
 {
     public interface IProcessExecutionProvider
     {
-        Process CurrentProcess { get; set; }
+        string ProcessName { get; }
 
-        string MicrosoftTestConsoleExePath { get; set; }
+        Process CurrentProcess { get; }
 
-        void ExecuteProcessWithAdditionalArguments(string arguments = "");  
+        void Execute(string arguments = "");  
 
-        void CurrentProcessWaitForExit();
+        void WaitForCurrentProcessExit();
     }
 }

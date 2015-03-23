@@ -16,7 +16,7 @@ namespace MSTest.Console.Extended.UnitTests.ProcessExecutionProviderTests
             Mock.Arrange(() => log.Info(Arg.AnyString));
             var processExecutionProvider = new ProcessExecutionProvider("cmd.exe", null, log);
 
-            processExecutionProvider.ExecuteProcessWithAdditionalArguments("ipconfig");
+            processExecutionProvider.Execute("ipconfig");
 
             Assert.IsNotNull(processExecutionProvider.CurrentProcess);
             Assert.IsNotNull(processExecutionProvider.CurrentProcess.StartInfo);
@@ -35,7 +35,7 @@ namespace MSTest.Console.Extended.UnitTests.ProcessExecutionProviderTests
             Mock.Arrange(() => consoleArgumentsProvider.ConsoleArguments).Returns("ipconfig");
             var processExecutionProvider = new ProcessExecutionProvider("cmd.exe", consoleArgumentsProvider, log);
 
-            processExecutionProvider.ExecuteProcessWithAdditionalArguments();
+            processExecutionProvider.Execute();
 
             Assert.IsNotNull(processExecutionProvider.CurrentProcess);
             Assert.IsNotNull(processExecutionProvider.CurrentProcess.StartInfo);

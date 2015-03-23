@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using log4net;
 using MSTest.Console.Extended.Interfaces;
 
@@ -6,28 +7,49 @@ namespace MSTest.Console.Extended.Infrastructure
 {
     public class ProcessExecutionProvider : IProcessExecutionProvider
     {
-        private readonly log4net.ILog log;
+        private readonly ILog log;
         private readonly IConsoleArgumentsProvider consoleArgumentsProvider;
+        private string processName;
 
-        public ProcessExecutionProvider(string microsoftTestConsoleExePath, IConsoleArgumentsProvider consoleArgumentsProvider, ILog log)
+        public ProcessExecutionProvider(string processName, IConsoleArgumentsProvider consoleArgumentsProvider, ILog log)
         {
-            this.MicrosoftTestConsoleExePath = microsoftTestConsoleExePath;
+            this.ProcessName = processName;
             this.consoleArgumentsProvider = consoleArgumentsProvider;
             this.log = log;
         }
 
-        public string MicrosoftTestConsoleExePath { get; set; }
+        public string ProcessName
+        {
+            get
+            {
+                return this.processName;
+            }
 
-        public Process CurrentProcess { get; set; }
+            private set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new ArgumentException("Process name cannot be null or empty string.");    
+                }
 
-        public void ExecuteProcessWithAdditionalArguments(string arguments = "")
+                this.processName = value;
+            }
+        }
+
+        public Process CurrentProcess
+        {
+            get;
+            private set;
+        }
+
+        public void Execute(string arguments = "")
         {
             if (string.IsNullOrEmpty(arguments))
             {
                 arguments = this.consoleArgumentsProvider.ConsoleArguments;
             }
 
-            ProcessStartInfo processStartInfo = new ProcessStartInfo(this.MicrosoftTestConsoleExePath, arguments);
+            ProcessStartInfo processStartInfo = new ProcessStartInfo(this.ProcessName, arguments);
             processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
             processStartInfo.RedirectStandardOutput = true;
             processStartInfo.RedirectStandardError = true;
@@ -54,7 +76,7 @@ namespace MSTest.Console.Extended.Infrastructure
             }
         }
 
-        public void CurrentProcessWaitForExit()
+        public void WaitForCurrentProcessExit()
         {
             this.CurrentProcess.WaitForExit();
         }

@@ -35,8 +35,8 @@ namespace MSTest.Console.Extended.Services
         {
             this.fileSystemProvider.DeleteTestResultFiles();
 
-            this.processExecutionProvider.ExecuteProcessWithAdditionalArguments();
-            this.processExecutionProvider.CurrentProcessWaitForExit();
+            this.processExecutionProvider.Execute();
+            this.processExecutionProvider.WaitForCurrentProcessExit();
             var initialTestRun = this.fileSystemProvider.DeserializeTestRun();
 
             var failedTests = this.microsoftTestTestRunProvider.GetAllNotPassedTests(initialTestRun.Results.ToList());
@@ -53,8 +53,8 @@ namespace MSTest.Console.Extended.Services
                         string retryTestRunArguments = this.microsoftTestTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(failedTests, retryTestRunResultsFilePath);
 
                         this.log.InfoFormat("Run {0} time with arguments {1}", i + 2, retryTestRunArguments);
-                        this.processExecutionProvider.ExecuteProcessWithAdditionalArguments(retryTestRunArguments);
-                        this.processExecutionProvider.CurrentProcessWaitForExit();
+                        this.processExecutionProvider.Execute(retryTestRunArguments);
+                        this.processExecutionProvider.WaitForCurrentProcessExit();
 
                         var retryTestRun = this.fileSystemProvider.DeserializeTestRun(retryTestRunResultsFilePath);
 

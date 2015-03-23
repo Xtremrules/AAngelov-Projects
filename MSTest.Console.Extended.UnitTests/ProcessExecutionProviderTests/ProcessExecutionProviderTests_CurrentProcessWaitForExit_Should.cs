@@ -17,14 +17,14 @@ namespace MSTest.Console.Extended.UnitTests.ProcessExecutionProviderTests
             Mock.Arrange(() => log.Info(Arg.AnyString));
             var processExecutionProvider = new ProcessExecutionProvider("cmd.exe", null, log);
 
-            processExecutionProvider.ExecuteProcessWithAdditionalArguments("ipconfig");
+            processExecutionProvider.Execute("ipconfig");
            
             Task.Factory.StartNew(() =>
             {
                 Thread.Sleep(200);
                 processExecutionProvider.CurrentProcess.Kill();
             });
-            processExecutionProvider.CurrentProcessWaitForExit();
+            processExecutionProvider.WaitForCurrentProcessExit();
             Assert.IsTrue(processExecutionProvider.CurrentProcess.HasExited);
         }
     }
