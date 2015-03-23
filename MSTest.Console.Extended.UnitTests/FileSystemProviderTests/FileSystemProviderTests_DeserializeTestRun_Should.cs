@@ -15,7 +15,7 @@ namespace MSTest.Console.Extended.UnitTests.FileSystemProviderTests
         {
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
             string newFileName = Path.GetTempFileName();
-            Mock.Arrange(() => consoleArgumentsProvider.NewTestResultPath).Returns(newFileName);
+            Mock.Arrange(() => consoleArgumentsProvider.NewResultsFilePath).Returns(newFileName);
             var fileSystemProvider = new FileSystemProvider(consoleArgumentsProvider);
             var testRun = fileSystemProvider.DeserializeTestRun("NoExceptions.trx");
             Assert.AreEqual<int>(2, testRun.Results.Count());
@@ -32,7 +32,7 @@ namespace MSTest.Console.Extended.UnitTests.FileSystemProviderTests
         {
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
             string newFileName = Path.GetTempFileName();
-            Mock.Arrange(() => consoleArgumentsProvider.NewTestResultPath).Returns(newFileName);
+            Mock.Arrange(() => consoleArgumentsProvider.NewResultsFilePath).Returns(newFileName);
             var fileSystemProvider = new FileSystemProvider(consoleArgumentsProvider);
             var testRun = fileSystemProvider.DeserializeTestRun("Exceptions.trx");
             Assert.AreEqual<int>(2, testRun.Results.Count());
@@ -48,7 +48,7 @@ namespace MSTest.Console.Extended.UnitTests.FileSystemProviderTests
         public void DeserializeTestResultsFile_WhenFailedTestsPresentAndNoTestResultsFilePassed()
         {
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
-            Mock.Arrange(() => consoleArgumentsProvider.TestResultPath).Returns("Exceptions.trx");
+            Mock.Arrange(() => consoleArgumentsProvider.ResultsFilePath).Returns("Exceptions.trx");
             var fileSystemProvider = new FileSystemProvider(consoleArgumentsProvider);
             var testRun = fileSystemProvider.DeserializeTestRun();
             Assert.AreEqual<int>(2, testRun.Results.Count());

@@ -44,7 +44,7 @@ namespace MSTest.Console.Extended.Infrastructure
             return (int)result;
         }
 
-        public string GenerateAdditionalArgumentsForFailedTestsRun(List<TestRunUnitTestResult> failedTests, string newTestResultFilePath)
+        public string GenerateAdditionalArgumentsForFailedTestsRun(List<TestRunUnitTestResult> failedTests, string newResultsFilePath)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(" ");
@@ -56,8 +56,8 @@ namespace MSTest.Console.Extended.Infrastructure
                 this.log.InfoFormat("##### MSTestRetrier: Execute again {0}", test.TestName);
             }
 
-            string additionalArgumentsForFailedTestsRun = string.Concat(this.consoleArgumentsProvider.ConsoleArguments, sb.ToString());
-            additionalArgumentsForFailedTestsRun = additionalArgumentsForFailedTestsRun.Replace(this.consoleArgumentsProvider.TestResultPath, newTestResultFilePath);
+            string additionalArgumentsForFailedTestsRun = string.Concat(this.consoleArgumentsProvider.StandardArguments, sb.ToString());
+            additionalArgumentsForFailedTestsRun = additionalArgumentsForFailedTestsRun.Replace(this.consoleArgumentsProvider.ResultsFilePath, newResultsFilePath);
             additionalArgumentsForFailedTestsRun = additionalArgumentsForFailedTestsRun.TrimEnd();
 
             return additionalArgumentsForFailedTestsRun;

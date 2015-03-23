@@ -2,15 +2,15 @@
 {
     public interface IConsoleArgumentsProvider
     {
-        string ConsoleArguments { get; set; }
+        string StandardArguments { get; set; }
         
-        string TestResultPath { get; set; }
+        string ResultsFilePath { get; set; }
 
-        string NewTestResultPath { get; set; }
+        string NewResultsFilePath { get; set; }
 
         int RetriesCount { get; set; }
 
-        bool ShouldDeleteOldTestResultFiles { get; set; }
+        bool ShouldDeleteOldResultsFiles { get; set; }
     
         int FailedTestsThreshold { get; set; }
     }

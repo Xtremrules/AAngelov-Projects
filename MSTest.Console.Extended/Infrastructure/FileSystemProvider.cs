@@ -19,7 +19,7 @@ namespace MSTest.Console.Extended.Infrastructure
         public void SerializeTestRun(TestRun testRun)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(TestRun));
-            TextWriter writer = new StreamWriter(this.consoleArgumentsProvider.NewTestResultPath);
+            TextWriter writer = new StreamWriter(this.consoleArgumentsProvider.NewResultsFilePath);
 
             using (writer)
             {
@@ -33,7 +33,7 @@ namespace MSTest.Console.Extended.Infrastructure
 
             if (string.IsNullOrEmpty(resultsPath))
             {
-                resultsPath = this.consoleArgumentsProvider.TestResultPath;
+                resultsPath = this.consoleArgumentsProvider.ResultsFilePath;
             }
 
             if (File.Exists(resultsPath))
@@ -52,12 +52,12 @@ namespace MSTest.Console.Extended.Infrastructure
 
         public void DeleteTestResultFiles()
         {
-            if (this.consoleArgumentsProvider.ShouldDeleteOldTestResultFiles)
+            if (this.consoleArgumentsProvider.ShouldDeleteOldResultsFiles)
             {
                 var filesToBeDeleted = new List<string>()
                 {
-                    this.consoleArgumentsProvider.TestResultPath,
-                    this.consoleArgumentsProvider.NewTestResultPath
+                    this.consoleArgumentsProvider.ResultsFilePath,
+                    this.consoleArgumentsProvider.NewResultsFilePath
                 };
 
                 foreach (var currentFilePath in filesToBeDeleted)

@@ -18,7 +18,7 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
             Mock.Arrange(() => log.Info(Arg.AnyString));
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
             string newFileName = Path.GetTempFileName();
-            Mock.Arrange(() => consoleArgumentsProvider.NewTestResultPath).Returns(newFileName);
+            Mock.Arrange(() => consoleArgumentsProvider.NewResultsFilePath).Returns(newFileName);
             var fileSystemProvider = new FileSystemProvider(consoleArgumentsProvider);
             var testRun = fileSystemProvider.DeserializeTestRun("NoExceptions.trx");
             
@@ -34,7 +34,7 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
             Mock.Arrange(() => log.Info(Arg.AnyString));
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
             string newFileName = Path.GetTempFileName();
-            Mock.Arrange(() => consoleArgumentsProvider.NewTestResultPath).Returns(newFileName);
+            Mock.Arrange(() => consoleArgumentsProvider.NewResultsFilePath).Returns(newFileName);
             var fileSystemProvider = new FileSystemProvider(consoleArgumentsProvider);
             var testRun = fileSystemProvider.DeserializeTestRun("Exceptions.trx");
             

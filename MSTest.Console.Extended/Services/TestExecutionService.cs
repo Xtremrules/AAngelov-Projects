@@ -82,8 +82,8 @@ namespace MSTest.Console.Extended.Services
 
         private string GetRetryTestRunResultsFilePath(int retryIndex)
         {
-            string initialResultsFileName = Path.GetFileNameWithoutExtension(this.consoleArgumentsProvider.TestResultPath);
-            string initialResultsDirectory = Path.GetDirectoryName(this.consoleArgumentsProvider.TestResultPath);
+            string initialResultsFileName = Path.GetFileNameWithoutExtension(this.consoleArgumentsProvider.ResultsFilePath);
+            string initialResultsDirectory = Path.GetDirectoryName(this.consoleArgumentsProvider.ResultsFilePath);
 
             string retryResultsFileName = string.Format("{0}-Retry{1}.trx", initialResultsFileName, retryIndex);
 

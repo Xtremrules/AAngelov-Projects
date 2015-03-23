@@ -46,7 +46,7 @@ namespace MSTest.Console.Extended.Infrastructure
         {
             if (string.IsNullOrEmpty(arguments))
             {
-                arguments = this.consoleArgumentsProvider.ConsoleArguments;
+                arguments = this.consoleArgumentsProvider.StandardArguments;
             }
 
             ProcessStartInfo processStartInfo = new ProcessStartInfo(this.ProcessName, arguments);

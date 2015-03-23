@@ -32,7 +32,7 @@ namespace MSTest.Console.Extended.UnitTests.ProcessExecutionProviderTests
             Mock.Arrange(() => log.Info(Arg.AnyString));
              
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
-            Mock.Arrange(() => consoleArgumentsProvider.ConsoleArguments).Returns("ipconfig");
+            Mock.Arrange(() => consoleArgumentsProvider.StandardArguments).Returns("ipconfig");
             var processExecutionProvider = new ProcessExecutionProvider("cmd.exe", consoleArgumentsProvider, log);
 
             processExecutionProvider.Execute();

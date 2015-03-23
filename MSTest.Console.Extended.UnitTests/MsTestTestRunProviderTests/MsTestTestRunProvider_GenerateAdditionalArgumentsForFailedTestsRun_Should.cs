@@ -18,8 +18,8 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
             Mock.Arrange(() => log.Info(Arg.AnyString));
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
             string newTestResultsPath = Path.GetTempFileName();
-            Mock.Arrange(() => consoleArgumentsProvider.ConsoleArguments).Returns(@"/resultsfile:""C:\Results.trx""");
-            Mock.Arrange(() => consoleArgumentsProvider.TestResultPath).Returns(@"C:\Results.trx");
+            Mock.Arrange(() => consoleArgumentsProvider.StandardArguments).Returns(@"/resultsfile:""C:\Results.trx""");
+            Mock.Arrange(() => consoleArgumentsProvider.ResultsFilePath).Returns(@"C:\Results.trx");
             var fileSystemProvider = new FileSystemProvider(consoleArgumentsProvider);
             var testRun = fileSystemProvider.DeserializeTestRun("Exceptions.trx");
             
@@ -36,8 +36,8 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
             Mock.Arrange(() => log.Info(Arg.AnyString));
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
             string newTestResultsPath = Path.GetTempFileName();
-            Mock.Arrange(() => consoleArgumentsProvider.ConsoleArguments).Returns(@"/resultsfile:""C:\Results.trx""");
-            Mock.Arrange(() => consoleArgumentsProvider.TestResultPath).Returns(@"C:\Results.trx");
+            Mock.Arrange(() => consoleArgumentsProvider.StandardArguments).Returns(@"/resultsfile:""C:\Results.trx""");
+            Mock.Arrange(() => consoleArgumentsProvider.ResultsFilePath).Returns(@"C:\Results.trx");
             var fileSystemProvider = new FileSystemProvider(consoleArgumentsProvider);
             var testRun = fileSystemProvider.DeserializeTestRun("Exceptions.trx");
             

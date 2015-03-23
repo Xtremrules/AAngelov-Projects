@@ -17,7 +17,7 @@ namespace MSTest.Console.Extended.UnitTests.FileSystemProviderTests
             var file = File.CreateText(newFileName);
             file.Close();
 
-            Mock.Arrange(() => consoleArgumentsProvider.ShouldDeleteOldTestResultFiles).Returns(false);
+            Mock.Arrange(() => consoleArgumentsProvider.ShouldDeleteOldResultsFiles).Returns(false);
             var fileSystemProvider = new FileSystemProvider(consoleArgumentsProvider);
             fileSystemProvider.DeleteTestResultFiles();
          
@@ -34,9 +34,9 @@ namespace MSTest.Console.Extended.UnitTests.FileSystemProviderTests
             string newFileName1 = Path.GetTempFileName();
             file = File.CreateText(newFileName);
             file.Close();
-            Mock.Arrange(() => consoleArgumentsProvider.ShouldDeleteOldTestResultFiles).Returns(true);
-            Mock.Arrange(() => consoleArgumentsProvider.TestResultPath).Returns(newFileName);
-            Mock.Arrange(() => consoleArgumentsProvider.NewTestResultPath).Returns(newFileName1);
+            Mock.Arrange(() => consoleArgumentsProvider.ShouldDeleteOldResultsFiles).Returns(true);
+            Mock.Arrange(() => consoleArgumentsProvider.ResultsFilePath).Returns(newFileName);
+            Mock.Arrange(() => consoleArgumentsProvider.NewResultsFilePath).Returns(newFileName1);
             var fileSystemProvider = new FileSystemProvider(consoleArgumentsProvider);
             fileSystemProvider.DeleteTestResultFiles();
          
@@ -51,9 +51,9 @@ namespace MSTest.Console.Extended.UnitTests.FileSystemProviderTests
             string newFileName = Path.GetTempFileName();
             var file = File.CreateText(newFileName);
             file.Close();
-            Mock.Arrange(() => consoleArgumentsProvider.ShouldDeleteOldTestResultFiles).Returns(true);
-            Mock.Arrange(() => consoleArgumentsProvider.TestResultPath).Returns(newFileName);
-            Mock.Arrange(() => consoleArgumentsProvider.NewTestResultPath).Returns(newFileName);
+            Mock.Arrange(() => consoleArgumentsProvider.ShouldDeleteOldResultsFiles).Returns(true);
+            Mock.Arrange(() => consoleArgumentsProvider.ResultsFilePath).Returns(newFileName);
+            Mock.Arrange(() => consoleArgumentsProvider.NewResultsFilePath).Returns(newFileName);
             var fileSystemProvider = new FileSystemProvider(consoleArgumentsProvider);
             fileSystemProvider.DeleteTestResultFiles();
          
