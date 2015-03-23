@@ -70,7 +70,9 @@ namespace MSTest.Console.Extended.Infrastructure
             {
                 var targetResult = targetResults.Where(x => x.TestId == sourceResult.TestId).First();
 
-                this.fileSystemProvider.ReplaceTestResultResultsFiles(source, sourceResult, target, targetResult);
+                var sourceResultFilesPaths = this.GetTestResultFilesPaths(source, sourceResult);
+                var targetResultFilesPaths = this.GetTestResultFilesPaths(target, targetResult);
+                this.fileSystemProvider.ReplaceFiles(sourceResultFilesPaths, targetResultFilesPaths);
 
                 TestRunUnitTestResult updatedTestResult = this.GetUpdatedTestResult(sourceResult, targetResult);
                 var targetResultIndex = targetResults.IndexOf(targetResult);
@@ -80,7 +82,26 @@ namespace MSTest.Console.Extended.Infrastructure
             this.UpdateResultsSummary(target);
         }
 
-       
+        private IList<string> GetTestResultFilesPaths(TestRun run, TestRunUnitTestResult result)
+        {
+            IList<string> filesPaths = new List<string>();
+
+            if (result.ResultFiles != null && result.ResultFiles.Length > 0)
+            {
+                string baseResultsFolder = Path.Combine(run.TestSettings.Deployment.UserDeploymentRoot,
+                      run.TestSettings.Deployment.RunDeploymentRoot,
+                      "In",
+                      result.ExecutionId);
+
+                foreach (var file in result.ResultFiles)
+                {
+                    string filePath = Path.Combine(baseResultsFolder, file.Path);
+                    filesPaths.Add(filePath);
+                }
+            }
+
+            return filesPaths;
+        }
 
         private void UpdateResultsSummary(TestRun testRun)
         {
