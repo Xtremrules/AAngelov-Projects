@@ -11,6 +11,8 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
     [TestClass]
     public class MsTestTestRunProvider_GenerateAdditionalArgumentsForFailedTestsRun_Should
     {
+        private readonly IFileSystemProvider fileSystemProvider = Mock.Create<IFileSystemProvider>();
+
         [TestMethod]
         public void AddOneTestArgument_WhenOneFailedTestPresent()
         {
@@ -22,8 +24,8 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
             Mock.Arrange(() => consoleArgumentsProvider.ResultsFilePath).Returns(@"C:\Results.trx");
             var fileSystemProvider = new FileSystemProvider(consoleArgumentsProvider);
             var testRun = fileSystemProvider.DeserializeTestRun("Exceptions.trx");
-            
-            var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, log);
+
+            var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, fileSystemProvider, log);
             var failedTests = microsoftTestTestRunProvider.GetAllNotPassedTests(testRun.Results.ToList());
             string additionalArguments = microsoftTestTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(failedTests, newTestResultsPath);
             Assert.AreEqual<string>(string.Format(@"/resultsfile:""{0}"" /test:TestConsoleExtended", newTestResultsPath), additionalArguments);
@@ -40,8 +42,8 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
             Mock.Arrange(() => consoleArgumentsProvider.ResultsFilePath).Returns(@"C:\Results.trx");
             var fileSystemProvider = new FileSystemProvider(consoleArgumentsProvider);
             var testRun = fileSystemProvider.DeserializeTestRun("Exceptions.trx");
-            
-            var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, log);
+
+            var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, fileSystemProvider, log);
             string additionalArguments = microsoftTestTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(testRun.Results.ToList(), newTestResultsPath);
             Assert.AreEqual<string>(string.Format(@"/resultsfile:""{0}"" /test:TestConsoleExtended /test:TestConsoleExtended_Second", newTestResultsPath), additionalArguments);
         }

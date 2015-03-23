@@ -18,10 +18,10 @@ namespace MSTest.Console.Extended.Infrastructure
         private readonly IConsoleArgumentsProvider consoleArgumentsProvider;
         private readonly IFileSystemProvider fileSystemProvider;
 
-        public MsTestTestRunProvider(IConsoleArgumentsProvider consoleArgumentsProvider, ILog log)
+        public MsTestTestRunProvider(IConsoleArgumentsProvider consoleArgumentsProvider, IFileSystemProvider fileSystemprovider, ILog log)
         {
             this.consoleArgumentsProvider = consoleArgumentsProvider;
-            this.fileSystemProvider = new FileSystemProvider(this.consoleArgumentsProvider);
+            this.fileSystemProvider = fileSystemprovider;
             this.log = log;
         }
 
@@ -69,7 +69,7 @@ namespace MSTest.Console.Extended.Infrastructure
             foreach (var sourceResult in source.Results)
             {
                 var targetResult = targetResults.Where(x => x.TestId == sourceResult.TestId).First();
-                
+
                 var sourceResultFilesPaths = this.GetTestResultFilesPaths(source, sourceResult);
                 var targetResultFilesPaths = this.GetTestResultFilesPaths(target, targetResult);
                 this.fileSystemProvider.ReplaceFiles(sourceResultFilesPaths, targetResultFilesPaths);

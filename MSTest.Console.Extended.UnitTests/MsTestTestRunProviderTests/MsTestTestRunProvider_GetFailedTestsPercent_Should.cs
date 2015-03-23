@@ -11,14 +11,16 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
     [TestClass]
     public class MsTestTestRunProvider_GetFailedTestsPercent_Should
     {
+        private readonly IFileSystemProvider fileSystemProvider = Mock.Create<IFileSystemProvider>();
+
         [TestMethod]
         public void ReturnZero_WhenNoFailedTestsPresent()
         {
             var log = Mock.Create<ILog>();
             Mock.Arrange(() => log.Info(Arg.AnyString));
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
-            
-            var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, log);
+
+            var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, this.fileSystemProvider, log);
             List<TestRunUnitTestResult> failedTests = new List<TestRunUnitTestResult>();
             List<TestRunUnitTestResult> allTests = new List<TestRunUnitTestResult>()
             {
@@ -35,8 +37,8 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
             var log = Mock.Create<ILog>();
             Mock.Arrange(() => log.Info(Arg.AnyString));
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
-            
-            var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, log);
+
+            var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, this.fileSystemProvider, log);
             List<TestRunUnitTestResult> failedTests = new List<TestRunUnitTestResult>()
             {
                 new TestRunUnitTestResult()
@@ -57,8 +59,8 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
             var log = Mock.Create<ILog>();
             Mock.Arrange(() => log.Info(Arg.AnyString));
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
-            
-            var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, log);
+
+            var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, this.fileSystemProvider, log);
             List<TestRunUnitTestResult> failedTests = new List<TestRunUnitTestResult>();
             List<TestRunUnitTestResult> allTests = new List<TestRunUnitTestResult>();
             var failedTestsPercentage = microsoftTestTestRunProvider.CalculatedFailedTestsPercentage(failedTests, allTests);

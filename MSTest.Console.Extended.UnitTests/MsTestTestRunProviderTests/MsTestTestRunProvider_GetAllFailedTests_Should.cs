@@ -11,6 +11,8 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
     [TestClass]
     public class MsTestTestRunProvider_GetAllFailedTests_Should
     {
+        private readonly IFileSystemProvider fileSystemProvider = Mock.Create<IFileSystemProvider>();
+
         [TestMethod]
         public void GetAllFailedTests_WhenAllArePassed()
         {
@@ -21,8 +23,8 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
             Mock.Arrange(() => consoleArgumentsProvider.NewResultsFilePath).Returns(newFileName);
             var fileSystemProvider = new FileSystemProvider(consoleArgumentsProvider);
             var testRun = fileSystemProvider.DeserializeTestRun("NoExceptions.trx");
-            
-            var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, log);
+
+            var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, this.fileSystemProvider, log);
             var failedTests = microsoftTestTestRunProvider.GetAllNotPassedTests(testRun.Results.ToList());
             Assert.AreEqual<int>(0, failedTests.Count);
         }
@@ -37,8 +39,8 @@ namespace MSTest.Console.Extended.UnitTests.MsTestTestRunProviderTests
             Mock.Arrange(() => consoleArgumentsProvider.NewResultsFilePath).Returns(newFileName);
             var fileSystemProvider = new FileSystemProvider(consoleArgumentsProvider);
             var testRun = fileSystemProvider.DeserializeTestRun("Exceptions.trx");
-            
-            var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, log);
+
+            var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, this.fileSystemProvider, log);
             var failedTests = microsoftTestTestRunProvider.GetAllNotPassedTests(testRun.Results.ToList());
             Assert.AreEqual<int>(1, failedTests.Count);
         }

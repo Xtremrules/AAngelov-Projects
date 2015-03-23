@@ -16,9 +16,9 @@ namespace MSTest.Console.Extended
 
             var consoleArgumentsProvider = new ConsoleArgumentsProvider(arguments);
 
-            var testRunProviderLogger = LogManager.GetLogger(typeof(MsTestTestRunProvider));
-            var testRunprovider = new MsTestTestRunProvider(consoleArgumentsProvider, testRunProviderLogger);
             var fileSystemProvider = new FileSystemProvider(consoleArgumentsProvider);
+            var testRunProviderLogger = LogManager.GetLogger(typeof(MsTestTestRunProvider));
+            var testRunprovider = new MsTestTestRunProvider(consoleArgumentsProvider, fileSystemProvider, testRunProviderLogger);
             var processExecutionProvider = new ProcessExecutionProvider(microsoftTestConsoleExePath, consoleArgumentsProvider, LogManager.GetLogger(typeof(ProcessExecutionProvider)));
             var testExecutionProviderLogger = LogManager.GetLogger(typeof(TestExecutionService));
 
