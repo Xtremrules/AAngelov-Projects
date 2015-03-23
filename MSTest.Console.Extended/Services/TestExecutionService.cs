@@ -39,8 +39,9 @@ namespace MSTest.Console.Extended.Services
             this.processExecutionProvider.WaitForCurrentProcessExit();
             var initialTestRun = this.fileSystemProvider.DeserializeTestRun();
 
-            var failedTests = this.microsoftTestTestRunProvider.GetAllNotPassedTests(initialTestRun.Results.ToList());
-            int failedTestsPercentage = this.microsoftTestTestRunProvider.CalculatedFailedTestsPercentage(failedTests, initialTestRun.Results.ToList());
+            var initialTestRunResults = initialTestRun.Results.ToList();
+            var failedTests = this.microsoftTestTestRunProvider.GetAllNotPassedTests(initialTestRunResults);
+            int failedTestsPercentage = this.microsoftTestTestRunProvider.CalculatedFailedTestsPercentage(failedTests, initialTestRunResults);
 
             if (failedTestsPercentage < this.consoleArgumentsProvider.FailedTestsThreshold)
             {
