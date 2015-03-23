@@ -12,7 +12,7 @@ namespace MSTest.Console.Extended.Infrastructure
         private const string TestResultFilePathRegexPattern = @".*resultsfile:(?<ResultsFilePath>[1-9A-Za-z\\:._]{1,})";
         private const string NewTestResultFilePathRegexPattern = @".*(?<NewResultsFilePathArgument>/newResultsfile:(?<NewResultsFilePath>[1-9A-Za-z\\:._]{1,}))";
         private const string RetriesCountRegexPattern = @".*(?<RetriesArgument>/retriesCount:(?<RetriesCount>[0-9]{1})).*";
-        private const string FailedTestsThresholdRegexPattern = @".*(?<ThresholdArgument>/threshold:(?<ThresholdCount>[0-9]{1})).*";
+        private const string FailedTestsThresholdRegexPattern = @".*(?<ThresholdArgument>/threshold:(?<ThresholdCount>[0-9]{1,2})).*";
         private const string DeleteOldFilesRegexPattern = @".*(?<DeleteOldFilesArgument>/deleteOldResultsFiles:(?<DeleteOldFilesValue>[a-zA-Z]{4,5})).*";
         private const string ArgumentRegexPattern = @".*/(?<ArgumentName>[a-zA-Z]{1,}):(?<ArgumentValue>.*)";
 
@@ -26,21 +26,45 @@ namespace MSTest.Console.Extended.Infrastructure
             this.InitializeDeleteOldResultFiles();
         }
 
-        public string ConsoleArguments { get; set; }
+        public string ConsoleArguments
+        {
+            get;
+            set;
+        }
 
-        public string TestResultPath { get; set; }
+        public string TestResultPath
+        {
+            get;
+            set;
+        }
 
-        public string NewTestResultPath { get; set; }
+        public string NewTestResultPath
+        {
+            get;
+            set;
+        }
 
-        public int RetriesCount { get; set; }
+        public int RetriesCount
+        {
+            get;
+            set;
+        }
 
-        public int FailedTestsThreshold { get; set; }
+        public int FailedTestsThreshold
+        {
+            get;
+            set;
+        }
 
-        public bool ShouldDeleteOldTestResultFiles { get; set; }
+        public bool ShouldDeleteOldTestResultFiles
+        {
+            get;
+            set;
+        }
 
         private void InitializeTestResultsPath()
         {
-            Regex testResultsPathRegex = new Regex(TestResultFilePathRegexPattern, RegexOptions.Singleline);
+            Regex testResultsPathRegex = this.GetArgumentRegex(TestResultFilePathRegexPattern);
             Match currentMatch = testResultsPathRegex.Match(this.ConsoleArguments);
 
             if (!currentMatch.Success)
@@ -53,7 +77,7 @@ namespace MSTest.Console.Extended.Infrastructure
 
         private void InitializeNewTestResultsPath()
         {
-            Regex newTestResultsPathRegex = new Regex(NewTestResultFilePathRegexPattern, RegexOptions.Singleline);
+            Regex newTestResultsPathRegex = this.GetArgumentRegex(NewTestResultFilePathRegexPattern);
             Match currentMatch = newTestResultsPathRegex.Match(this.ConsoleArguments);
 
             if (!currentMatch.Success)
@@ -69,7 +93,7 @@ namespace MSTest.Console.Extended.Infrastructure
 
         private void InitializeRetriesCount()
         {
-            Regex retriesCountRegex = new Regex(RetriesCountRegexPattern, RegexOptions.Singleline);
+            Regex retriesCountRegex = this.GetArgumentRegex(RetriesCountRegexPattern);
             Match currentMatch = retriesCountRegex.Match(this.ConsoleArguments);
 
             if (!currentMatch.Success)
@@ -85,7 +109,7 @@ namespace MSTest.Console.Extended.Infrastructure
 
         private void InitializeFailedTestsThreshold()
         {
-            Regex failedTestsThresholdRegex = new Regex(FailedTestsThresholdRegexPattern, RegexOptions.Singleline);
+            Regex failedTestsThresholdRegex = this.GetArgumentRegex(FailedTestsThresholdRegexPattern);
             Match currentMatch = failedTestsThresholdRegex.Match(this.ConsoleArguments);
 
             if (!currentMatch.Success)
@@ -101,7 +125,7 @@ namespace MSTest.Console.Extended.Infrastructure
 
         private void InitializeDeleteOldResultFiles()
         {
-            Regex deleteOldResultsRegex = new Regex(DeleteOldFilesRegexPattern, RegexOptions.Singleline);
+            Regex deleteOldResultsRegex = this.GetArgumentRegex(DeleteOldFilesRegexPattern);
             Match currentMatch = deleteOldResultsRegex.Match(this.ConsoleArguments);
 
             if (!currentMatch.Success)
@@ -146,6 +170,12 @@ namespace MSTest.Console.Extended.Infrastructure
             }
 
             return argumentPair;
+        }
+
+        private Regex GetArgumentRegex(string argumentPattern)
+        {
+            Regex argumentRegex = new Regex(argumentPattern, RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+            return argumentRegex;
         }
     }
 }

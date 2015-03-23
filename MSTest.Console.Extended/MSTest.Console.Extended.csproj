@@ -70,7 +70,6 @@
     <Compile Include="Infrastructure\ConsoleArgumentsProvider.cs" />
     <Compile Include="Infrastructure\FileSystemProvider.cs" />
     <Compile Include="Infrastructure\ProcessExecutionProvider.cs" />
-    <Compile Include="Infrastructure\TestRunUpdater.cs" />
     <Compile Include="Interfaces\IConsoleArgumentsProvider.cs" />
     <Compile Include="Interfaces\IFileSystemProvider.cs" />
     <Compile Include="Interfaces\IProcessExecutionProvider.cs" />

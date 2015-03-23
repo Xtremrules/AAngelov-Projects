@@ -10,10 +10,12 @@ namespace MSTest.Console.Extended
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(Program));
 
-        public static void Main(string[] args)
+        public static void Main(string[] arguments)
         {
-            string microsoftTestConsoleExePath = ConfigurationManager.AppSettings["MSTestConsoleRunnerPath"]; 
-            var consoleArgumentsProvider = new ConsoleArgumentsProvider(args);
+            string microsoftTestConsoleExePath = ConfigurationManager.AppSettings["MSTestConsoleRunnerPath"];
+
+            var consoleArgumentsProvider = new ConsoleArgumentsProvider(arguments);
+            
             var engine = new TestExecutionService(
                 new MsTestTestRunProvider(consoleArgumentsProvider, LogManager.GetLogger(typeof(MsTestTestRunProvider))),
                 new FileSystemProvider(consoleArgumentsProvider),
