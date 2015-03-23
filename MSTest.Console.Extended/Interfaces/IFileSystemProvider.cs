@@ -12,6 +12,6 @@ namespace MSTest.Console.Extended.Interfaces
 
         void DeleteTestResultFiles();
 
-        void ReplaceFiles(IList<string> sourceFiles, IList<string> destinationFiles);
+        void ReplaceTestResultResultsFiles(TestRun sourceRun, TestRunUnitTestResult sourceResult, TestRun targetRun, TestRunUnitTestResult targetResult);
     }
 }
