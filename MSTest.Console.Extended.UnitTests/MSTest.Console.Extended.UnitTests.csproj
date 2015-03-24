@@ -64,24 +64,19 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="FileSystemProviderTests\FileSystemProviderTests_DeleteTestResultFiles_Should.cs" />
-    <Compile Include="FileSystemProviderTests\FileSystemProviderTests_DeserializeTestRun_Should.cs" />
-    <Compile Include="FileSystemProviderTests\FileSystemProviderTests_SerializeTestRun_Should.cs" />
-    <Compile Include="MsTestTestRunProviderTests\MsTestTestRunProvider_GetFailedTestsPercent_Should.cs" />
-    <Compile Include="MsTestTestRunProviderTests\MsTestTestRunProvider_GenerateAdditionalArgumentsForFailedTestsRun_Should.cs" />
-    <Compile Include="MsTestTestRunProviderTests\MsTestTestRunProvider_GetAllFailedTests_Should.cs" />
-    <Compile Include="ProcessExecutionProviderTests\ProcessExecutionProviderTests_CurrentProcessWaitForExit_Should.cs" />
-    <Compile Include="ProcessExecutionProviderTests\ProcessExecutionProviderTests_ExecuteProcessWithAdditionalArguments_Should.cs" />
-    <Compile Include="ConsoleArgumentsProviderTests\ConsoleArgumentsProvider_Constructor_Should.cs" />
+    <Compile Include="ConsoleArgumentsProviderTests.cs" />
+    <Compile Include="FileSystemProviderTests.cs" />
+    <Compile Include="MsTestRunProviderTests.cs" />
+    <Compile Include="ProcessExecutionProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestExecutionServiceTests\TestExecutionService_ExecuteWithRetry_Should.cs" />
+    <Compile Include="TestExecutionServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Exceptions.trx">
+    <None Include="Resources\Exceptions.trx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="NoExceptions.trx">
+    <None Include="Resources\NoExceptions.trx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />

@@ -1,28 +1,30 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using log4net;
+﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MSTest.Console.Extended.Data;
-using MSTest.Console.Extended.Interfaces;
-using MSTest.Console.Extended.Services;
 using Telerik.JustMock;
+using log4net;
+using MSTest.Console.Extended.Interfaces;
+using System.IO;
+using MSTest.Console.Extended.Data;
+using System.Collections.Generic;
+using MSTest.Console.Extended.Services;
 
-namespace MSTest.Console.Extended.UnitTests.TestExecutionServiceTests
+namespace MSTest.Console.Extended.UnitTests
 {
     [TestClass]
-    public class TestExecutionService_ExecuteWithRetry_Should
+    public class TestExecutionServiceTests
     {
         [TestMethod]
-        public void ExecuteOnlyOnce_WhenRetriestCountSetToOneAndNoFailedTestsPresent()
+        public void ExecuteWithRetry_ShouldExecuteOnlyOneRun_WhenRetriestCountSetToOneAndNoFailedTestsPresent()
         {
             var log = Mock.Create<ILog>();
-            Mock.Arrange(() => log.Info(Arg.AnyString));             
+            Mock.Arrange(() => log.Info(Arg.AnyString));
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
             string newFileName = Path.GetTempFileName();
             Mock.Arrange(() => consoleArgumentsProvider.NewResultsFilePath).Returns(newFileName);
             Mock.Arrange(() => consoleArgumentsProvider.ResultsFilePath).Returns("Exceptions.trx");
             Mock.Arrange(() => consoleArgumentsProvider.StandardArguments).Returns("ipconfig");
             Mock.Arrange(() => consoleArgumentsProvider.RetriesCount).Returns(1);
+            Mock.Arrange(() => consoleArgumentsProvider.FailedTestsThreshold).Returns(10);
             var processExecutionProvider = Mock.Create<IProcessExecutionProvider>();
             Mock.Arrange(() => processExecutionProvider.Execute(string.Empty)).DoNothing();
             Mock.Arrange(() => processExecutionProvider.WaitForCurrentProcessExit()).DoNothing();
@@ -42,11 +44,11 @@ namespace MSTest.Console.Extended.UnitTests.TestExecutionServiceTests
             testRun.ResultSummary.Outcome = "Passed";
             Mock.Arrange(() => fileSystemProvider.DeserializeTestRun(Arg.AnyString)).Returns(testRun);
             var microsoftTestRunProvider = Mock.Create<IMsTestTestRunProvider>();
-          
+
             Mock.Arrange(() => microsoftTestRunProvider.UpdateTestRun(Arg.IsAny<TestRun>(), Arg.IsAny<TestRun>())).DoNothing();
             Mock.Arrange(() => microsoftTestRunProvider.GetAllNotPassedTests(Arg.IsAny<List<TestRunUnitTestResult>>())).Returns(new List<TestRunUnitTestResult>() { });
             Mock.Arrange(() => microsoftTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(Arg.IsAny<List<TestRunUnitTestResult>>(), Arg.AnyString)).DoNothing();
-          
+
             var engine = new TestExecutionService(
                 microsoftTestRunProvider,
                 fileSystemProvider,
@@ -54,21 +56,26 @@ namespace MSTest.Console.Extended.UnitTests.TestExecutionServiceTests
                 consoleArgumentsProvider,
                 log);
             int result = engine.ExecuteWithRetry();
-            Mock.Assert(() => fileSystemProvider.SerializeTestRun(Arg.IsAny<TestRun>()), Occurs.Exactly(1));
+            Mock.Assert(() => processExecutionProvider.Execute(Arg.AnyString), Occurs.Once());
+            Mock.Assert(() => fileSystemProvider.DeserializeTestRun(Arg.AnyString), Occurs.Once());
+            Mock.Assert(() => microsoftTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(Arg.IsAny<List<TestRunUnitTestResult>>(), Arg.AnyString), Occurs.Never());
+            Mock.Arrange(() => microsoftTestRunProvider.UpdateTestRun(Arg.IsAny<TestRun>(), Arg.IsAny<TestRun>())).OccursNever();
+            Mock.Arrange(() => fileSystemProvider.SerializeTestRun(Arg.IsAny<TestRun>())).OccursNever();
             Assert.AreEqual<int>(0, result);
         }
 
         [TestMethod]
-        public void ExecuteOnlyOnce_WhenRetriestCountSetToOneAndFailedTestsPresent()
+        public void ExecuteWithRetry_ShouldExecuteTwoRuns_WhenRetriesCountSetToOneAndFailedTestsPresent()
         {
             var log = Mock.Create<ILog>();
-            Mock.Arrange(() => log.Info(Arg.AnyString));             
+            Mock.Arrange(() => log.Info(Arg.AnyString));
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
             string newFileName = Path.GetTempFileName();
             Mock.Arrange(() => consoleArgumentsProvider.NewResultsFilePath).Returns(newFileName);
             Mock.Arrange(() => consoleArgumentsProvider.ResultsFilePath).Returns("Exceptions.trx");
             Mock.Arrange(() => consoleArgumentsProvider.StandardArguments).Returns("ipconfig");
             Mock.Arrange(() => consoleArgumentsProvider.RetriesCount).Returns(1);
+            Mock.Arrange(() => consoleArgumentsProvider.FailedTestsThreshold).Returns(10);
             var processExecutionProvider = Mock.Create<IProcessExecutionProvider>();
             Mock.Arrange(() => processExecutionProvider.Execute(string.Empty)).DoNothing();
             Mock.Arrange(() => processExecutionProvider.WaitForCurrentProcessExit()).DoNothing();
@@ -88,7 +95,7 @@ namespace MSTest.Console.Extended.UnitTests.TestExecutionServiceTests
             Mock.Arrange(() => microsoftTestRunProvider.UpdateTestRun(Arg.IsAny<TestRun>(), Arg.IsAny<TestRun>())).DoNothing();
             Mock.Arrange(() => microsoftTestRunProvider.GetAllNotPassedTests(Arg.IsAny<List<TestRunUnitTestResult>>())).Returns(new List<TestRunUnitTestResult>() { new TestRunUnitTestResult(), new TestRunUnitTestResult() });
             Mock.Arrange(() => microsoftTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(Arg.IsAny<List<TestRunUnitTestResult>>(), Arg.AnyString)).DoNothing();
-          
+
             var engine = new TestExecutionService(
                 microsoftTestRunProvider,
                 fileSystemProvider,
@@ -96,21 +103,27 @@ namespace MSTest.Console.Extended.UnitTests.TestExecutionServiceTests
                 consoleArgumentsProvider,
                 log);
             int result = engine.ExecuteWithRetry();
-            Mock.Assert(() => fileSystemProvider.SerializeTestRun(Arg.IsAny<TestRun>()), Occurs.Exactly(1));
+
+            Mock.Assert(() => processExecutionProvider.Execute(Arg.AnyString), Occurs.Exactly(2));
+            Mock.Assert(() => fileSystemProvider.DeserializeTestRun(Arg.AnyString), Occurs.Exactly(2));
+            Mock.Assert(() => microsoftTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(Arg.IsAny<List<TestRunUnitTestResult>>(), Arg.AnyString), Occurs.Once());
+            Mock.Arrange(() => microsoftTestRunProvider.UpdateTestRun(Arg.IsAny<TestRun>(), Arg.IsAny<TestRun>())).OccursOnce();
+            Mock.Arrange(() => fileSystemProvider.SerializeTestRun(Arg.IsAny<TestRun>())).OccursNever();
             Assert.AreEqual<int>(1, result);
         }
 
         [TestMethod]
-        public void ExecuteOnlyOnce_WhenRetriestCountSetToTwoAndNoFailedTestsPresent()
+        public void ExecuteWithRetry_ShouldExecuteOnlyOneRun_WhenRetriestCountSetToTwoAndNoFailedTestsPresent()
         {
             var log = Mock.Create<ILog>();
-            Mock.Arrange(() => log.Info(Arg.AnyString));             
+            Mock.Arrange(() => log.Info(Arg.AnyString));
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
             string newFileName = Path.GetTempFileName();
             Mock.Arrange(() => consoleArgumentsProvider.NewResultsFilePath).Returns(newFileName);
             Mock.Arrange(() => consoleArgumentsProvider.ResultsFilePath).Returns("NoExceptions.trx");
             Mock.Arrange(() => consoleArgumentsProvider.StandardArguments).Returns("ipconfig");
             Mock.Arrange(() => consoleArgumentsProvider.RetriesCount).Returns(2);
+            Mock.Arrange(() => consoleArgumentsProvider.FailedTestsThreshold).Returns(10);
             var processExecutionProvider = Mock.Create<IProcessExecutionProvider>();
             Mock.Arrange(() => processExecutionProvider.Execute(string.Empty)).DoNothing();
             Mock.Arrange(() => processExecutionProvider.WaitForCurrentProcessExit()).DoNothing();
@@ -134,7 +147,7 @@ namespace MSTest.Console.Extended.UnitTests.TestExecutionServiceTests
             Mock.Arrange(() => microsoftTestRunProvider.UpdateTestRun(Arg.IsAny<TestRun>(), Arg.IsAny<TestRun>())).DoNothing();
             Mock.Arrange(() => microsoftTestRunProvider.GetAllNotPassedTests(Arg.IsAny<List<TestRunUnitTestResult>>())).Returns(new List<TestRunUnitTestResult>() { });
             Mock.Arrange(() => microsoftTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(Arg.IsAny<List<TestRunUnitTestResult>>(), Arg.AnyString)).DoNothing();
-          
+
             var engine = new TestExecutionService(
                 microsoftTestRunProvider,
                 fileSystemProvider,
@@ -147,15 +160,15 @@ namespace MSTest.Console.Extended.UnitTests.TestExecutionServiceTests
             Mock.Assert(() => fileSystemProvider.DeserializeTestRun(Arg.AnyString), Occurs.Once());
             Mock.Assert(() => microsoftTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(Arg.IsAny<List<TestRunUnitTestResult>>(), Arg.AnyString), Occurs.Never());
             Mock.Arrange(() => microsoftTestRunProvider.UpdateTestRun(Arg.IsAny<TestRun>(), Arg.IsAny<TestRun>())).OccursNever();
-            Mock.Assert(() => fileSystemProvider.SerializeTestRun(Arg.IsAny<TestRun>()), Occurs.Exactly(1));
+            Mock.Arrange(() => fileSystemProvider.SerializeTestRun(Arg.IsAny<TestRun>())).OccursNever();
             Assert.AreEqual<int>(0, result);
         }
 
         [TestMethod]
-        public void ExecuteThreeTimes_WhenRetriestCountSetToTwoAndFailedTestsPresent()
+        public void ExecuteWithRetry_ShouldExecuteThreeRuns_WhenRetriestCountSetToTwoAndFailedTestsPresent()
         {
             var log = Mock.Create<ILog>();
-            Mock.Arrange(() => log.Info(Arg.AnyString));             
+            Mock.Arrange(() => log.Info(Arg.AnyString));
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
             string newFileName = Path.GetTempFileName();
             Mock.Arrange(() => consoleArgumentsProvider.NewResultsFilePath).Returns(newFileName);
@@ -195,15 +208,15 @@ namespace MSTest.Console.Extended.UnitTests.TestExecutionServiceTests
             Mock.Assert(() => fileSystemProvider.DeserializeTestRun(Arg.AnyString), Occurs.Exactly(3));
             Mock.Assert(() => microsoftTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(Arg.IsAny<List<TestRunUnitTestResult>>(), Arg.AnyString), Occurs.Exactly(2));
             Mock.Arrange(() => microsoftTestRunProvider.UpdateTestRun(Arg.IsAny<TestRun>(), Arg.IsAny<TestRun>())).Occurs(2);
-            Mock.Assert(() => fileSystemProvider.SerializeTestRun(Arg.IsAny<TestRun>()), Occurs.Exactly(1));
+            Mock.Arrange(() => fileSystemProvider.SerializeTestRun(Arg.IsAny<TestRun>())).OccursNever();
             Assert.AreEqual<int>(1, result);
         }
 
-         [TestMethod]
-        public void ExecuteOnlyOnce_WhenThresholdSmallerThanFailedTestsPercentage()
+        [TestMethod]
+        public void ExecuteWithRetry_ShouldExecuteOnlyOneRun_WhenThresholdSmallerThanFailedTestsPercentage()
         {
             var log = Mock.Create<ILog>();
-            Mock.Arrange(() => log.Info(Arg.AnyString));             
+            Mock.Arrange(() => log.Info(Arg.AnyString));
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
             string newFileName = Path.GetTempFileName();
             Mock.Arrange(() => consoleArgumentsProvider.NewResultsFilePath).Returns(newFileName);
@@ -244,15 +257,15 @@ namespace MSTest.Console.Extended.UnitTests.TestExecutionServiceTests
             Mock.Assert(() => fileSystemProvider.DeserializeTestRun(Arg.AnyString), Occurs.Once());
             Mock.Assert(() => microsoftTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(Arg.IsAny<List<TestRunUnitTestResult>>(), Arg.AnyString), Occurs.Never());
             Mock.Arrange(() => microsoftTestRunProvider.UpdateTestRun(Arg.IsAny<TestRun>(), Arg.IsAny<TestRun>())).OccursNever();
-            Mock.Assert(() => fileSystemProvider.SerializeTestRun(Arg.IsAny<TestRun>()), Occurs.Once());
+            Mock.Arrange(() => fileSystemProvider.SerializeTestRun(Arg.IsAny<TestRun>())).OccursNever();
             Assert.AreEqual<int>(1, result);
         }
 
-         [TestMethod]
-        public void ExecuteOnlyOnce_WhenThresholdEqualToFailedTestsPercentage()
+        [TestMethod]
+        public void ExecuteWithRetry_ShouldExecuteOnlyOneRun_WhenThresholdEqualToFailedTestsPercentage()
         {
             var log = Mock.Create<ILog>();
-            Mock.Arrange(() => log.Info(Arg.AnyString));             
+            Mock.Arrange(() => log.Info(Arg.AnyString));
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
             string newFileName = Path.GetTempFileName();
             Mock.Arrange(() => consoleArgumentsProvider.NewResultsFilePath).Returns(newFileName);
@@ -293,21 +306,21 @@ namespace MSTest.Console.Extended.UnitTests.TestExecutionServiceTests
             Mock.Assert(() => fileSystemProvider.DeserializeTestRun(Arg.AnyString), Occurs.Once());
             Mock.Assert(() => microsoftTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(Arg.IsAny<List<TestRunUnitTestResult>>(), Arg.AnyString), Occurs.Never());
             Mock.Arrange(() => microsoftTestRunProvider.UpdateTestRun(Arg.IsAny<TestRun>(), Arg.IsAny<TestRun>())).OccursNever();
-            Mock.Assert(() => fileSystemProvider.SerializeTestRun(Arg.IsAny<TestRun>()), Occurs.Once());
+            Mock.Arrange(() => fileSystemProvider.SerializeTestRun(Arg.IsAny<TestRun>())).OccursNever();
             Assert.AreEqual<int>(1, result);
         }
 
         [TestMethod]
-        public void ExecuteFourTimes_WhenRetriestCountSetToThreeAndFailedTestsPresent()
+        public void ExecuteWithRetry_ShouldExecuteFourRuns_WhenRetriestCountSetToThreeAndFailedTestsPresent()
         {
             var log = Mock.Create<ILog>();
-            Mock.Arrange(() => log.Info(Arg.AnyString));             
+            Mock.Arrange(() => log.Info(Arg.AnyString));
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
             string newFileName = Path.GetTempFileName();
             Mock.Arrange(() => consoleArgumentsProvider.NewResultsFilePath).Returns(newFileName);
             Mock.Arrange(() => consoleArgumentsProvider.ResultsFilePath).Returns("Exceptions.trx");
             Mock.Arrange(() => consoleArgumentsProvider.StandardArguments).Returns("ipconfig");
-               Mock.Arrange(() => consoleArgumentsProvider.RetriesCount).Returns(3);
+            Mock.Arrange(() => consoleArgumentsProvider.RetriesCount).Returns(3);
             Mock.Arrange(() => consoleArgumentsProvider.FailedTestsThreshold).Returns(100);
             var processExecutionProvider = Mock.Create<IProcessExecutionProvider>();
             Mock.Arrange(() => processExecutionProvider.Execute(string.Empty)).DoNothing();
@@ -341,21 +354,21 @@ namespace MSTest.Console.Extended.UnitTests.TestExecutionServiceTests
             Mock.Assert(() => fileSystemProvider.DeserializeTestRun(Arg.AnyString), Occurs.Exactly(4));
             Mock.Assert(() => microsoftTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(Arg.IsAny<List<TestRunUnitTestResult>>(), Arg.AnyString), Occurs.Exactly(3));
             Mock.Arrange(() => microsoftTestRunProvider.UpdateTestRun(Arg.IsAny<TestRun>(), Arg.IsAny<TestRun>())).Occurs(3);
-            Mock.Assert(() => fileSystemProvider.SerializeTestRun(Arg.IsAny<TestRun>()), Occurs.Exactly(1));
+            Mock.Arrange(() => fileSystemProvider.SerializeTestRun(Arg.IsAny<TestRun>())).OccursNever();
             Assert.AreEqual<int>(1, result);
         }
 
         [TestMethod]
-        public void ExecuteOnce_WhenRetriestCountSetToThreeAndFailedTestsPresentAndSecondTimeNoFailedTestsPresent()
+        public void ExecuteWithRetry_ShouldExecuteTwoRuns_WhenRetriestCountSetToThreeAndFailedTestsPresentAndSecondTimeNoFailedTestsPresent()
         {
             var log = Mock.Create<ILog>();
-            Mock.Arrange(() => log.Info(Arg.AnyString));             
+            Mock.Arrange(() => log.Info(Arg.AnyString));
             var consoleArgumentsProvider = Mock.Create<IConsoleArgumentsProvider>();
             string newFileName = Path.GetTempFileName();
             Mock.Arrange(() => consoleArgumentsProvider.NewResultsFilePath).Returns(newFileName);
             Mock.Arrange(() => consoleArgumentsProvider.ResultsFilePath).Returns("Exceptions.trx");
             Mock.Arrange(() => consoleArgumentsProvider.StandardArguments).Returns("ipconfig");
-               Mock.Arrange(() => consoleArgumentsProvider.RetriesCount).Returns(3);
+            Mock.Arrange(() => consoleArgumentsProvider.RetriesCount).Returns(3);
             Mock.Arrange(() => consoleArgumentsProvider.FailedTestsThreshold).Returns(100);
             var processExecutionProvider = Mock.Create<IProcessExecutionProvider>();
             Mock.Arrange(() => processExecutionProvider.Execute(string.Empty)).DoNothing();
@@ -390,7 +403,7 @@ namespace MSTest.Console.Extended.UnitTests.TestExecutionServiceTests
             Mock.Assert(() => fileSystemProvider.DeserializeTestRun(Arg.AnyString), Occurs.Exactly(2));
             Mock.Assert(() => microsoftTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(Arg.IsAny<List<TestRunUnitTestResult>>(), Arg.AnyString), Occurs.Once());
             Mock.Arrange(() => microsoftTestRunProvider.UpdateTestRun(Arg.IsAny<TestRun>(), Arg.IsAny<TestRun>())).OccursOnce();
-            Mock.Assert(() => fileSystemProvider.SerializeTestRun(Arg.IsAny<TestRun>()), Occurs.Once());
+            Mock.Arrange(() => fileSystemProvider.SerializeTestRun(Arg.IsAny<TestRun>())).OccursNever();
             Assert.AreEqual<int>(0, result);
         }
     }
