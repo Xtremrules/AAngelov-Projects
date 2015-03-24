@@ -65,42 +65,24 @@ namespace MSTest.Console.Extended.Infrastructure
 
         public void UpdateTestRun(TestRun source, TestRun target)
         {
+            this.fileSystemProvider.ReplaceTestResultsFiles(source, target);
+
+            this.UpdateTestResultsInfo(source, target);
+
+            this.UpdateResultsSummary(target);
+        }
+
+        private void UpdateTestResultsInfo(TestRun source, TestRun target)
+        {
             var targetResults = target.Results.ToList();
             foreach (var sourceResult in source.Results)
             {
                 var targetResult = targetResults.Where(x => x.TestId == sourceResult.TestId).First();
 
-                var sourceResultFilesPaths = this.GetTestResultFilesPaths(source, sourceResult);
-                var targetResultFilesPaths = this.GetTestResultFilesPaths(target, targetResult);
-                this.fileSystemProvider.ReplaceFiles(sourceResultFilesPaths, targetResultFilesPaths);
-
                 TestRunUnitTestResult updatedTestResult = this.GetUpdatedTestResult(sourceResult, targetResult);
                 var targetResultIndex = targetResults.IndexOf(targetResult);
                 target.Results[targetResultIndex] = updatedTestResult;
             }
-
-            this.UpdateResultsSummary(target);
-        }
-
-        private IList<string> GetTestResultFilesPaths(TestRun run, TestRunUnitTestResult result)
-        {
-            IList<string> filesPaths = new List<string>();
-
-            if (result.ResultFiles != null && result.ResultFiles.Length > 0)
-            {
-                string baseResultsFolder = Path.Combine(run.TestSettings.Deployment.UserDeploymentRoot,
-                      run.TestSettings.Deployment.RunDeploymentRoot,
-                      "In",
-                      result.ExecutionId);
-
-                foreach (var file in result.ResultFiles)
-                {
-                    string filePath = Path.Combine(baseResultsFolder, file.Path);
-                    filesPaths.Add(filePath);
-                }
-            }
-
-            return filesPaths;
         }
 
         private void UpdateResultsSummary(TestRun testRun)

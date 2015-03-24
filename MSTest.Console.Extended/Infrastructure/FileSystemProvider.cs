@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 using MSTest.Console.Extended.Data;
 using MSTest.Console.Extended.Interfaces;
@@ -70,7 +71,28 @@ namespace MSTest.Console.Extended.Infrastructure
             }
         }
 
-        public void ReplaceFiles(IList<string> sourceFiles, IList<string> destinationFiles)
+        public void ReplaceTestResultsFiles(TestRun sourceRun, TestRun targetRun)
+        {
+            foreach (var sourceResult in sourceRun.Results)
+            {
+                var targetResult = targetRun.Results.Where(x => x.TestId == sourceResult.TestId).FirstOrDefault();
+
+                if (targetResult != null)
+                {
+                    var sourceResultFilesPaths = this.GetTestResultFilesPaths(sourceRun, sourceResult);
+                    var targetResultFilesPaths = this.GetTestResultFilesPaths(targetRun, targetResult);
+
+                    this.ReplaceFiles(sourceResultFilesPaths, targetResultFilesPaths);
+                }
+                else
+                {
+                    string message = string.Format("Test with ID {0} does not exist in the target test run.", sourceResult.TestId);
+                    throw new InvalidOperationException(message);
+                }
+            }
+        }
+
+        private void ReplaceFiles(IList<string> sourceFiles, IList<string> destinationFiles)
         {
             if (sourceFiles.Count != destinationFiles.Count)
             {
@@ -90,6 +112,27 @@ namespace MSTest.Console.Extended.Infrastructure
                 var sourceFile = sourceFiles[i];
                 File.Copy(sourceFile, destinationFile);
             }
+        }
+
+        private IList<string> GetTestResultFilesPaths(TestRun run, TestRunUnitTestResult result)
+        {
+            IList<string> filesPaths = new List<string>();
+
+            if (result.ResultFiles != null && result.ResultFiles.Length > 0)
+            {
+                string baseResultsFolder = Path.Combine(run.TestSettings.Deployment.UserDeploymentRoot,
+                      run.TestSettings.Deployment.RunDeploymentRoot,
+                      "In",
+                      result.ExecutionId);
+
+                foreach (var file in result.ResultFiles)
+                {
+                    string filePath = Path.Combine(baseResultsFolder, file.Path);
+                    filesPaths.Add(filePath);
+                }
+            }
+
+            return filesPaths;
         }
     }
 }
