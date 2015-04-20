@@ -56,6 +56,8 @@ namespace MSTest.Console.Extended.Infrastructure
                 this.log.InfoFormat("##### MSTestRetrier: Execute again {0}", test.TestName);
             }
 
+            sb.Append("/unique");
+
             string additionalArgumentsForFailedTestsRun = string.Concat(this.consoleArgumentsProvider.StandardArguments, sb.ToString());
             additionalArgumentsForFailedTestsRun = additionalArgumentsForFailedTestsRun.Replace(this.consoleArgumentsProvider.ResultsFilePath, newResultsFilePath);
             additionalArgumentsForFailedTestsRun = additionalArgumentsForFailedTestsRun.TrimEnd();

@@ -29,7 +29,7 @@ namespace MSTest.Console.Extended.UnitTests
             var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, fileSystemProvider, log);
             var failedTests = microsoftTestTestRunProvider.GetAllNotPassedTests(testRun.Results.ToList());
             string additionalArguments = microsoftTestTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(failedTests, newTestResultsPath);
-            Assert.AreEqual<string>(string.Format(@"/resultsfile:""{0}"" /test:TestConsoleExtended", newTestResultsPath), additionalArguments);
+            Assert.AreEqual<string>(string.Format(@"/resultsfile:""{0}"" /test:TestConsoleExtended /unique", newTestResultsPath), additionalArguments);
         }
 
         [TestMethod]
@@ -46,7 +46,7 @@ namespace MSTest.Console.Extended.UnitTests
 
             var microsoftTestTestRunProvider = new MsTestTestRunProvider(consoleArgumentsProvider, fileSystemProvider, log);
             string additionalArguments = microsoftTestTestRunProvider.GenerateAdditionalArgumentsForFailedTestsRun(testRun.Results.ToList(), newTestResultsPath);
-            Assert.AreEqual<string>(string.Format(@"/resultsfile:""{0}"" /test:TestConsoleExtended /test:TestConsoleExtended_Second", newTestResultsPath), additionalArguments);
+            Assert.AreEqual<string>(string.Format(@"/resultsfile:""{0}"" /test:TestConsoleExtended /test:TestConsoleExtended_Second /unique", newTestResultsPath), additionalArguments);
         }
 
         [TestMethod]
